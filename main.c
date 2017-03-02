@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "definition.h"
 #define SIZE 100
 #define INSERT "insert"
 #define DELETE "delete"
@@ -119,7 +120,7 @@ int main(int argc, char* argv[])
 				{
 
 				}
-			}
+			}//end_while
 		}
 		else
 		{
