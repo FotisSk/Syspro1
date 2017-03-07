@@ -2,29 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include "definition.h"
-#define SIZE 100
-#define INSERT "insert"
-#define DELETE "delete"
-#define FIND "find"
-#define CALLER "caller"
-#define LOOKUP "lookup"
-#define CALLEE "callee"
-#define INDIST1 "indist1"
-#define TOPDEST "topdest"
-#define TOP "top"
-#define BYE "bye"
-#define PRINT "print"
-#define DUMP "dump"
+#include "insert.h"
 
 int main(int argc, char* argv[])
 {
-	int i, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, duration, type, tarrif, fault_condition;
-	char fileName[SIZE], fileLine[SIZE], userLine[SIZE], cdr_uniq_id[SIZE], origNum[SIZE], destNum[SIZE], date[SIZE], time[SIZE];
-	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split;
+	int i, j, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, duration, type, tarrif, fault_condition, len, bucket1_maxEntries, bucket2_maxEntries, insertFlag;
+	char fileName[SIZE], fileLine[SIZE], userLine[SIZE];
+	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time;
+	hashTable1 *HT1;
+	//hashTable2 *HT2;
 	FILE *op;
 
 	if(argc == 9)	//input apo arxeio
 	{
+		insertFlag = 0;
 		readFromFile = 0;
 		for(i=1; i<9; i=i+2)
 		{
@@ -34,9 +25,26 @@ int main(int argc, char* argv[])
 				strcpy(fileName, argv[i+1]);
 			}
 			else if(strcmp(argv[i], h1) == 0)
+			{
 				HT1numOfEntries = atoi(argv[i+1]);
+				HT1 = malloc(HT1numOfEntries * sizeof(hashTable1));
+				for(j=0; j<HT1numOfEntries; j++)	//arxikopoihsh HT1
+				{
+					HT1[j].numOfNodes1 = 0;
+					HT1[j].head1 = NULL;
+				}
+			}
 			else if(strcmp(argv[i], h2) == 0)
+			{
 				HT2numOfEntries = atoi(argv[i+1]);
+			/*	HT2 = malloc(HT2numOfEntries * sizeof(hashTable2));
+				for(j=0; j<HT2numOfEntries; j++)	//arxikopoihsh HT2
+				{
+					HT2[j].numOfNodes2 = 0;
+					HT2[j].head2 = NULL;
+				}
+			*/
+			}
 			else if(strcmp(argv[i], s) == 0)
 				bucketSize = atoi(argv[i+1]);
 			else
@@ -56,25 +64,54 @@ int main(int argc, char* argv[])
 
 				if(strcmp(split, INSERT) == 0)
 				{
+					insertFlag = 1;
+
 					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					cdr_uniq_id = malloc((len+1)*sizeof(char));
 					strcpy(cdr_uniq_id, split);
+
 					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					origNum = malloc((len+1)*sizeof(char));
 					strcpy(origNum, split);
+
 					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					destNum = malloc((len+1)*sizeof(char));
 					strcpy(destNum, split);
+
 					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					date = malloc((len+1)*sizeof(char));
 					strcpy(date, split);
+
 					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					time = malloc((len+1)*sizeof(char));
 					strcpy(time, split);
+
 					split = strtok(NULL, " ;\r\n");
 					duration = atoi(split);
+
 					split = strtok(NULL, " ;\r\n");
 					type = atoi(split);
+
 					split = strtok(NULL, " ;\r\n");
 					tarrif = atoi(split);
+
 					split = strtok(NULL, " ;\r\n");
 					fault_condition = atoi(split);
 
+					if(insertFlag == 0)
+					{
+						bucket1_maxEntries = bucketSize / (sizeof(origNum) + sizeof(bucketNode2*));
+						bucket2_maxEntries = bucketSize / (sizeof(cdr_uniq_id) + sizeof(destNum) + sizeof(date) + sizeof(time) + sizeof(duration) + sizeof(type) + sizeof(tarrif) + sizeof(fault_condition));
+					}
+					//klisi insert sinartisis
+					insert(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					//free gia na min exoume leaks
+					free(cdr_uniq_id); free(origNum); free(destNum); free(date); free(time);
 				}
 				else if(strcmp(split, DELETE) == 0)
 				{
