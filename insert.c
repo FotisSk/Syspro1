@@ -38,6 +38,8 @@ int insert(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int buc
 	{
 		bn1 = malloc(sizeof(bucketNode1));
 		HT1[key].head1 = bn1;
+		HT1[key].numOfNodes1++;
+
 		bn1 -> nextAvailablePos = 1;	//1 kai oxi 0 giati vazo entry sto bucket parallila
 		bn1 -> next  = NULL;
 		bn1 -> b1 = malloc(bucket1_maxEntries * sizeof(bucket1));
@@ -76,7 +78,7 @@ int insert(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int buc
 		//nextAvailablePos1 = head1 -> nextAvailablePos;
 		for(i=0; i<numOfNodes1; i++)	//anazitisi an iparxei idi to origNum.
 		{
-			for(j=0; j<bucket1_maxEntries; j++)
+			for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
 			{
 				if(strcmp(currentBucketNode1 -> b1[j].origNum, origNum) == 0)	//an vreis to tilefono tote pigaine na deis ama xorane ta kainourgia extraCDR.
 				{
@@ -116,6 +118,7 @@ int insert(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int buc
 						currentBucketNode2 -> b2[nextAvailablePos2].fault_condition = fault_condition;
 						/***/
 						currentBucketNode2 -> nextAvailablePos++;
+						return 1;
 					}
 					else if(flag2 == 1)	//eftase sto telos kai de vrike keni thesi.
 					{
@@ -147,6 +150,7 @@ int insert(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int buc
 
 						currentBucketNode2 -> b2[0].fault_condition = fault_condition;
 						/***/
+						return 1;
 					}
 
 				}
@@ -195,6 +199,7 @@ int insert(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int buc
 			else	//an de xoraei to entry sto teleutaio bucket1
 			{
 				currentBucketNode1 -> next = malloc(sizeof(bucketNode1));
+				HT1[key].numOfNodes1++;
 				currentBucketNode1 = currentBucketNode1 -> next;
 				
 				currentBucketNode1 -> nextAvailablePos = 1;

@@ -64,8 +64,6 @@ int main(int argc, char* argv[])
 
 				if(strcmp(split, INSERT) == 0)
 				{
-					insertFlag = 1;
-
 					split = strtok(NULL, " ;\r\n");
 					len = strlen(split);
 					cdr_uniq_id = malloc((len+1)*sizeof(char));
@@ -110,6 +108,7 @@ int main(int argc, char* argv[])
 					}
 					//klisi insert sinartisis
 					insert(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					insertFlag = 1;
 					//free gia na min exoume leaks
 					free(cdr_uniq_id); free(origNum); free(destNum); free(date); free(time);
 				}
