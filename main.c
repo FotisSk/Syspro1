@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
 		if(readFromFile == 1)
 		{
 			op = fopen(fileName, "r");
+			int counter = 0;
 			while(fgets(fileLine, SIZE, op) != NULL)
 			{
 				split = strtok(fileLine, " ;\r\n");
@@ -111,6 +112,12 @@ int main(int argc, char* argv[])
 					//klisi insert sinartisis
 					insertCaller(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
 					insertCallee(HT2, HT2numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					//counter++;
+					//if(counter == 22)
+					//{
+						//printf("here\n");
+					//}
+					//printf("counter: %d\n", counter);
 					insertFlag = 1;
 					//free gia na min exoume leaks
 					free(cdr_uniq_id);

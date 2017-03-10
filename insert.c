@@ -253,7 +253,7 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 
 				currentBucketNode2 -> nextAvailablePos = 1;
 				currentBucketNode2 -> next = NULL;
-				currentBucketNode2 -> b2 = malloc(sizeof(bucket2_caller));
+				currentBucketNode2 -> b2 = malloc(bucket1_maxEntries * sizeof(bucket2_caller));
 
 				/***/
 				currentBucketNode2 -> b2[0].cdr_uniq_id = malloc((strlen(cdr_uniq_id)+1) * sizeof(char));
@@ -518,7 +518,7 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 
 				currentBucketNode2 -> nextAvailablePos = 1;
 				currentBucketNode2 -> next = NULL;
-				currentBucketNode2 -> b2 = malloc(sizeof(bucket2_callee));
+				currentBucketNode2 -> b2 = malloc(bucket2_maxEntries * sizeof(bucket2_callee));
 
 				/***/
 				currentBucketNode2 -> b2[0].cdr_uniq_id = malloc((strlen(cdr_uniq_id)+1) * sizeof(char));
