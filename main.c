@@ -3,6 +3,7 @@
 #include <string.h>
 #include "definition.h"
 #include "insert.h"
+#include "delete.h"
 
 int main(int argc, char* argv[])
 {
@@ -10,7 +11,7 @@ int main(int argc, char* argv[])
 	char fileName[SIZE], fileLine[SIZE], userLine[SIZE];
 	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time;
 	hashTable1 *HT1;
-	//hashTable2 *HT2;
+	hashTable2 *HT2;
 	FILE *op;
 
 	if(argc == 9)	//input apo arxeio
@@ -37,13 +38,13 @@ int main(int argc, char* argv[])
 			else if(strcmp(argv[i], h2) == 0)
 			{
 				HT2numOfEntries = atoi(argv[i+1]);
-			/*	HT2 = malloc(HT2numOfEntries * sizeof(hashTable2));
+				HT2 = malloc(HT2numOfEntries * sizeof(hashTable2));
 				for(j=0; j<HT2numOfEntries; j++)	//arxikopoihsh HT2
 				{
 					HT2[j].numOfNodes2 = 0;
 					HT2[j].head2 = NULL;
 				}
-			*/
+			
 			}
 			else if(strcmp(argv[i], s) == 0)
 				bucketSize = atoi(argv[i+1]);
@@ -103,18 +104,44 @@ int main(int argc, char* argv[])
 
 					if(insertFlag == 0)
 					{
-						bucket1_maxEntries = bucketSize / (sizeof(origNum) + sizeof(bucketNode2*));
+						bucket1_maxEntries = bucketSize / (sizeof(origNum) + sizeof(bucketNode2_caller*));
 						bucket2_maxEntries = bucketSize / (sizeof(cdr_uniq_id) + sizeof(destNum) + sizeof(date) + sizeof(time) + sizeof(duration) + sizeof(type) + sizeof(tarrif) + sizeof(fault_condition));
+						printf("MAX ENTRIES: b1=%d, b2=%d\n", bucket1_maxEntries, bucket2_maxEntries);
 					}
 					//klisi insert sinartisis
-					insert(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					insertCaller(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					insertCallee(HT2, HT2numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
 					insertFlag = 1;
 					//free gia na min exoume leaks
-					free(cdr_uniq_id); free(origNum); free(destNum); free(date); free(time);
+					free(cdr_uniq_id);
+					cdr_uniq_id = NULL;
+					free(origNum);
+					origNum = NULL;
+					free(destNum);
+					destNum = NULL;
+					free(date);
+					date = NULL;
+					free(time);
+					time = NULL;
 				}
 				else if(strcmp(split, DELETE) == 0)
 				{
+					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					cdr_uniq_id = malloc((len+1)*sizeof(char));
+					strcpy(cdr_uniq_id, split);
 
+					split = strtok(NULL, " ;\r\n");
+					len = strlen(split);
+					origNum = malloc((len+1)*sizeof(char));
+					strcpy(origNum, split);
+
+					delete(HT1, HT1numOfEntries, cdr_uniq_id, origNum);
+					//free gia na min exoume leaks
+					free(origNum);
+					origNum = NULL;
+					free(cdr_uniq_id);
+					cdr_uniq_id = NULL;
 				}
 				else if(strcmp(split, FIND) == 0)
 				{

@@ -18,7 +18,7 @@
 #define DUMP "dump"
 
 /******************** CALLER ********************/
-typedef struct bucket2 //light pink
+typedef struct bucket2_caller //light pink
 {
 	char *cdr_uniq_id;
 	char *destNum;
@@ -28,27 +28,63 @@ typedef struct bucket2 //light pink
 	int type;
 	int tarrif;
 	int fault_condition;
-}bucket2;
+}bucket2_caller;
 
-typedef struct bucketNode2
+typedef struct bucketNode2_caller
 {
 	int nextAvailablePos;
-	bucket2 *b2;
-	struct bucketNode2 *next;
-}bucketNode2;
+	bucket2_caller *b2;
+	struct bucketNode2_caller *next;
+}bucketNode2_caller;
 
-typedef struct bucket1 //blue
+typedef struct bucket1_caller //blue
 {
 	char *origNum;
-	bucketNode2 *extraCDR;	
-}bucket1;
+	bucketNode2_caller *extraCDR;
+	int numOfNodes2;	
+}bucket1_caller;
 
-typedef struct bucketNode1
+typedef struct bucketNode1_caller
 {
 	int nextAvailablePos;
-	bucket1 *b1;
-	struct bucketNode1 *next;
-}bucketNode1;
+	bucket1_caller *b1;
+	struct bucketNode1_caller *next;
+}bucketNode1_caller;
+/***********************************************/
+
+/******************** CALLEE ********************/
+typedef struct bucket2_callee
+{
+	char *cdr_uniq_id;
+	char *origNum;
+	char *date;
+	char *time;
+	int duration;
+	int type;
+	int tarrif;
+	int fault_condition;
+}bucket2_callee;
+
+typedef struct bucketNode2_callee
+{
+	int nextAvailablePos;
+	bucket2_callee *b2;
+	struct bucketNode2_callee *next;
+}bucketNode2_callee;
+
+typedef struct bucket1_callee //blue
+{
+	char *destNum;
+	bucketNode2_callee *extraCDR;
+	int numOfNodes2;	
+}bucket1_callee;
+
+typedef struct bucketNode1_callee
+{
+	int nextAvailablePos;
+	bucket1_callee *b1;
+	struct bucketNode1_callee *next;
+}bucketNode1_callee;
 /***********************************************/
 
 
@@ -56,10 +92,17 @@ typedef struct bucketNode1
 typedef struct hashTable1
 {
 	int numOfNodes1;
-	bucketNode1 *head1;
+	bucketNode1_caller *head1;
 }hashTable1;
 /**************************************************/
 
+/******************** HASHTABLE2 *******************/
+typedef struct hashTable2
+{
+	int numOfNodes2;
+	bucketNode1_callee *head2;
+}hashTable2;
+/**************************************************/
 
 
 
