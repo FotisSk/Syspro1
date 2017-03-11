@@ -7,15 +7,27 @@
 #define INSERT "insert"
 #define DELETE "delete"
 #define FIND "find"
-#define CALLER "caller"
 #define LOOKUP "lookup"
-#define CALLEE "callee"
 #define INDIST1 "indist1"
 #define TOPDEST "topdest"
 #define TOP "top"
 #define BYE "bye"
 #define PRINT "print"
 #define DUMP "dump"
+
+typedef struct dateStruct
+{
+	int day;
+	int month;
+	int year;
+}dateStruct;
+
+typedef struct timeStruct
+{
+	int hours;
+	int minutes;
+	int totalMinutes;
+}timeStruct;
 
 /******************** CALLER ********************/
 typedef struct bucket2_caller //light pink

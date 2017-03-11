@@ -4,16 +4,19 @@
 #include "definition.h"
 #include "insert.h"
 #include "delete.h"
+#include "find_caller.h"
 
 int main(int argc, char* argv[])
 {
 	int i, j, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, duration, type, tarrif, fault_condition, len, bucket1_maxEntries, bucket2_maxEntries, insertFlag;
 	char fileName[SIZE], fileLine[SIZE], userLine[SIZE];
-	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time;
+	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2;
 	hashTable1 *HT1;
 	hashTable2 *HT2;
 	FILE *op;
 
+	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL;
+	
 	if(argc == 9)	//input apo arxeio
 	{
 		insertFlag = 0;
@@ -152,19 +155,89 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, FIND) == 0)
 				{
-					split = strtok(NULL, " ;\r\n");
-					if(strcmp(split, CALLER) == 0)
-					{
+					split = strtok(NULL, " \r\n");
+					len = strlen(split);
+					origNum = malloc((len+1)*sizeof(char));
+					strcpy(origNum, split);
 
+					split = strtok(NULL, " \r\n");
+					if(split)	//an einai diaforo tou NULL tote simainei oti mas edosan sigoura date h/kai time
+					{
+						len = strlen(split);
+						if(len == 5)	//to proto orisma einai time1
+						{
+							time1 = malloc((len+1)*sizeof(char));
+							strcpy(time1, split);
+
+							split = strtok(NULL, " \r\n");
+							len = strlen(split);
+							if(len == 5)	//to deutero orisma einai time2
+							{
+								time2 = malloc((len+1)*sizeof(char));
+								strcpy(time2, split);
+
+								findCaller(HT1, HT1numOfEntries, origNum, time1, date1, time2, date2);
+								free(time1);
+								time1 = NULL;
+								free(time2);
+								time2 = NULL;
+							}
+							else if(len == 8)	//to deutero orisma einai date1, ara to trito tha einai time2 kai to tetarto date2
+							{
+								date1 = malloc((len+1)*sizeof(char));
+								strcpy(date1, split);
+
+								split = strtok(NULL, " \r\n");
+								len = strlen(split);
+								time2 = malloc((len+1)*sizeof(char));
+								strcpy(time2, split);
+
+								split = strtok(NULL, " \r\n");
+								len = strlen(split);
+								date2 = malloc((len+1)*sizeof(char));
+								strcpy(date2, split);
+
+								findCaller(HT1, HT1numOfEntries, origNum, time1, date1, time2, date2);
+								free(time1);
+								time1 = NULL;
+								free(date1);
+								date1 = NULL;
+								free(time2);
+								time2 = NULL;
+								free(date2);
+								date2 = NULL;
+							}
+						}
+						else if(len == 8)	//to proto orisma einai date1, tote sigoura to deutero orisma einai date2
+						{
+							date1 = malloc((len+1)*sizeof(char));
+							strcpy(date1, split);
+
+							split = strtok(NULL, " \r\n");
+							len = strlen(split);
+							date2 = malloc((len+1)*sizeof(char));
+							strcpy(date2, split);
+
+							findCaller(HT1, HT1numOfEntries, origNum, time1, date1, time2, date2);
+							free(date1);
+							date1 = NULL;
+							free(date2);
+							date2 = NULL;
+						}
 					}
+					else
+					{
+						findCaller(HT1, HT1numOfEntries, origNum, time1, date1, time2, date2);
+						free(origNum);
+						origNum = NULL;		
+					}
+
+					findCaller(HT1, HT1numOfEntries, origNum, time1, date1, time2, date2);
+			
 				}
 				else if(strcmp(split, LOOKUP) == 0)
 				{
-					split = strtok(NULL, " ;\r\n");
-					if(strcmp(split, CALLEE) == 0)
-					{
 
-					}
 				}
 				else if(strcmp(split, INDIST1) == 0)
 				{

@@ -17,6 +17,50 @@ int hashFunction(char *num, int HTnumOfEntries)
 	return (sum % HTnumOfEntries);
 }
 
+
+dateStruct dateToIntegers(char *date)
+{
+	int dateInt, day, dayAndMonth, month, year;
+	dateStruct ds;
+
+	dateInt = atoi(date);
+
+	day = dateInt / 1000000;
+	dayAndMonth = dateInt / 10000;
+	month = dayAndMonth / 100;
+	year = dateInt % 10000;
+
+	ds.day = day;
+	ds.month = month;
+	ds.year - year;
+
+	return ds;
+}
+
+timeStruct timeToIntegers(char *time)
+{
+	int hours, minutes, totalMinutes;
+	timeStruct ts;
+	char *split;
+	char timeParser[6];
+
+	strcpy(timeParser, time);	//pername ston parser tin ora gia tin strtok
+
+	split = strtok(timeParser, " :\r\n");
+	hours = atoi(split);
+
+	split = strtok(NULL, " :\r\n");
+	minutes = atoi(split);
+
+	totalMinutes = hours*60 + minutes;
+
+	ts.hours = hours;
+	ts.minutes = minutes;
+	ts.totalMinutes = totalMinutes;
+
+	return ts;
+}
+
 /*********************************************************************************************************************/
 /****************************************************** CALLER ******************************************************/
 int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int bucket2_maxEntries,
