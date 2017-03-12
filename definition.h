@@ -34,8 +34,8 @@ typedef struct bucket2_caller //light pink
 {
 	char *cdr_uniq_id;
 	char *destNum;
-	char *date;
-	char *time;
+	dateStruct date;
+	timeStruct time;
 	int duration;
 	int type;
 	int tarrif;
@@ -69,8 +69,8 @@ typedef struct bucket2_callee
 {
 	char *cdr_uniq_id;
 	char *origNum;
-	char *date;
-	char *time;
+	dateStruct date;
+	timeStruct time;
 	int duration;
 	int type;
 	int tarrif;
