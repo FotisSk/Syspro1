@@ -4,7 +4,8 @@
 #include "definition.h"
 #include "insert.h"
 #include "delete.h"
-#include "find_caller.h"
+#include "find.h"
+#include "lookup.h"
 
 int main(int argc, char* argv[])
 {
@@ -208,7 +209,12 @@ int main(int argc, char* argv[])
 								strcpy(date2, split);
 
 								scenario = 3;
-								findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2);
+								
+								if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
+								{
+									printf("> Wrong dates were given (date1 > date2)\n");
+									printf("|--------------------------------------------------------------------------------------------------------|\n");
+								}
 								free(time1);
 								time1 = NULL;
 								free(date1);
@@ -230,7 +236,12 @@ int main(int argc, char* argv[])
 							strcpy(date2, split);
 
 							scenario = 2;
-							findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2);
+							
+							if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
+							{
+								printf("> Wrong dates were given (date1 > date2)\n");
+								printf("|--------------------------------------------------------------------------------------------------------|\n");
+							}
 							free(date1);
 							date1 = NULL;
 							free(date2);
@@ -247,7 +258,103 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, LOOKUP) == 0)
 				{
+					split = strtok(NULL, " \r\n");
+					len = strlen(split);
+					destNum = malloc((len+1)*sizeof(char));
+					strcpy(destNum, split);
 
+					/************* SCENARIOS *************/
+					/* 0: CALLEE                         */
+					/* 1: CALLEE TIME1 TIME2             */
+					/* 2: CALLEE DATE1 DATE2             */
+					/* 3: CALLEE TIME1 DATE1 TIME2 DATE2 */
+					/*************************************/
+
+					scenario = -1;
+
+					split = strtok(NULL, " \r\n");
+					if(split)	//an einai diaforo tou NULL tote simainei oti mas edosan sigoura date h/kai time
+					{
+						len = strlen(split);
+						if(len == 5)	//to proto orisma einai time1
+						{
+							time1 = malloc((len+1)*sizeof(char));
+							strcpy(time1, split);
+
+							split = strtok(NULL, " \r\n");
+							len = strlen(split);
+							if(len == 5)	//to deutero orisma einai time2
+							{
+								time2 = malloc((len+1)*sizeof(char));
+								strcpy(time2, split);
+
+								scenario = 1;
+								lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2);
+								free(time1);
+								time1 = NULL;
+								free(time2);
+								time2 = NULL;
+							}
+							else if(len == 8)	//to deutero orisma einai date1, ara to trito tha einai time2 kai to tetarto date2
+							{
+								date1 = malloc((len+1)*sizeof(char));
+								strcpy(date1, split);
+
+								split = strtok(NULL, " \r\n");
+								len = strlen(split);
+								time2 = malloc((len+1)*sizeof(char));
+								strcpy(time2, split);
+
+								split = strtok(NULL, " \r\n");
+								len = strlen(split);
+								date2 = malloc((len+1)*sizeof(char));
+								strcpy(date2, split);
+
+								scenario = 3;
+								if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
+								{
+									printf("> Wrong dates were given (date1 > date2)\n");
+									printf("|--------------------------------------------------------------------------------------------------------|\n");
+								}
+								free(time1);
+								time1 = NULL;
+								free(date1);
+								date1 = NULL;
+								free(time2);
+								time2 = NULL;
+								free(date2);
+								date2 = NULL;
+							}
+						}
+						else if(len == 8)	//to proto orisma einai date1, tote sigoura to deutero orisma einai date2
+						{
+							date1 = malloc((len+1)*sizeof(char));
+							strcpy(date1, split);
+
+							split = strtok(NULL, " \r\n");
+							len = strlen(split);
+							date2 = malloc((len+1)*sizeof(char));
+							strcpy(date2, split);
+
+							scenario = 2;
+							if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
+							{
+								printf("> Wrong dates were given (date1 > date2)\n");
+								printf("|--------------------------------------------------------------------------------------------------------|\n");
+							}	
+							free(date1);
+							date1 = NULL;
+							free(date2);
+							date2 = NULL;
+						}
+					}
+					else
+					{
+						scenario = 0;
+						lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2);
+						free(destNum);
+						destNum = NULL;		
+					}
 				}
 				else if(strcmp(split, INDIST1) == 0)
 				{
