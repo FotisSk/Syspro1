@@ -47,10 +47,15 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 							currentBucketNode2 -> b2[k].cdr_uniq_id = NULL;
 							free(currentBucketNode2 -> b2[k].destNum);
 							currentBucketNode2 -> b2[k].destNum = NULL;
-							free(currentBucketNode2 -> b2[k].date);
-							currentBucketNode2 -> b2[k].date = NULL;
-							free(currentBucketNode2 -> b2[k].time);
-							currentBucketNode2 -> b2[k].time = NULL;
+							
+							currentBucketNode2 -> b2[k].date.day = 0;
+							currentBucketNode2 -> b2[k].date.month = 0;
+							currentBucketNode2 -> b2[k].date.year = 0;
+							
+							currentBucketNode2 -> b2[k].time.hours = 0;
+							currentBucketNode2 -> b2[k].time.minutes = 0;
+							currentBucketNode2 -> b2[k].time.totalMinutes = 0;
+
 							currentBucketNode2 -> b2[k].duration = 0;
 							currentBucketNode2 -> b2[k].type = 0;
 							currentBucketNode2 -> b2[k].tarrif = 0;
@@ -68,11 +73,8 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 								currentBucketNode2 -> b2[currentPos].destNum = malloc((strlen(currentBucketNode2 -> b2[lastPos].destNum)+1) * sizeof(char));
 								strcpy(currentBucketNode2 -> b2[currentPos].destNum, currentBucketNode2 -> b2[lastPos].destNum );
 
-								currentBucketNode2 -> b2[currentPos].date = malloc((strlen(currentBucketNode2 -> b2[lastPos].date)+1) * sizeof(char));
-								strcpy(currentBucketNode2 -> b2[currentPos].date, currentBucketNode2 -> b2[lastPos].date );
-
-								currentBucketNode2 -> b2[currentPos].time = malloc((strlen(currentBucketNode2 -> b2[lastPos].time)+1) * sizeof(char));
-								strcpy(currentBucketNode2 -> b2[currentPos].time, currentBucketNode2 -> b2[lastPos].time );
+								currentBucketNode2 -> b2[currentPos].date = currentBucketNode2 -> b2[lastPos].date;
+								currentBucketNode2 -> b2[currentPos].time = currentBucketNode2 -> b2[lastPos].time;
 
 								currentBucketNode2 -> b2[currentPos].duration = currentBucketNode2 -> b2[lastPos].duration;
 								currentBucketNode2 -> b2[currentPos].type = currentBucketNode2 -> b2[lastPos].type;
@@ -84,10 +86,15 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 								currentBucketNode2 -> b2[lastPos].cdr_uniq_id = NULL;
 								free(currentBucketNode2 -> b2[lastPos].destNum);
 								currentBucketNode2 -> b2[lastPos].destNum = NULL;
-								free(currentBucketNode2 -> b2[lastPos].date);
-								currentBucketNode2 -> b2[lastPos].date = NULL;
-								free(currentBucketNode2 -> b2[lastPos].time);
-								currentBucketNode2 -> b2[lastPos].time = NULL;
+								
+								currentBucketNode2 -> b2[lastPos].date.day = 0;
+								currentBucketNode2 -> b2[lastPos].date.month = 0;
+								currentBucketNode2 -> b2[lastPos].date.year= 0;
+								
+								currentBucketNode2 -> b2[lastPos].time.hours = 0;
+								currentBucketNode2 -> b2[lastPos].time.minutes = 0;
+								currentBucketNode2 -> b2[lastPos].time.totalMinutes = 0;
+
 								currentBucketNode2 -> b2[lastPos].duration = 0;
 								currentBucketNode2 -> b2[lastPos].type = 0;
 								currentBucketNode2 -> b2[lastPos].tarrif = 0;
@@ -144,7 +151,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 	}
 	if(flag1 == 0)
 	{
-		printf("Error: Caller number '%s' not found.\n", origNum);
+		printf("Error: Caller '%s' not found.\n", origNum);
 		return -1;
 	}
 }

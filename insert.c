@@ -27,12 +27,12 @@ dateStruct dateToIntegers(char *date)
 
 	day = dateInt / 1000000;
 	dayAndMonth = dateInt / 10000;
-	month = dayAndMonth / 100;
+	month = dayAndMonth % 100;
 	year = dateInt % 10000;
 
 	ds.day = day;
 	ds.month = month;
-	ds.year - year;
+	ds.year = year;
 
 	return ds;
 }
@@ -70,7 +70,11 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 	int key, nextAvailablePos1, nextAvailablePos2, numOfNodes1, i, j, flag1, flag2;
 	bucketNode1_caller *bn1, *head1, *currentBucketNode1;
 	bucketNode2_caller *currentBucketNode2;
+	dateStruct ds;
+	timeStruct ts;
 
+	ds = dateToIntegers(date);
+	ts = timeToIntegers(time);
 	key = hashFunction(origNum, HT1numOfEntries);
 
 	if(HT1[key].numOfNodes1 == 0)	//den exei ksanabei entry
@@ -97,11 +101,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 		bn1 -> b1[0].extraCDR -> b2[0].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 		strcpy(bn1 -> b1[0].extraCDR -> b2[0].destNum, destNum);
 
-		bn1 -> b1[0].extraCDR -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-		strcpy(bn1 -> b1[0].extraCDR -> b2[0].date, date);
+		bn1 -> b1[0].extraCDR -> b2[0].date = ds;
 
-		bn1 -> b1[0].extraCDR -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-		strcpy(bn1 -> b1[0].extraCDR -> b2[0].time, time);
+		bn1 -> b1[0].extraCDR -> b2[0].time = ts;
 
 		bn1 -> b1[0].extraCDR -> b2[0].duration = duration;
 		bn1 -> b1[0].extraCDR -> b2[0].type = type;
@@ -146,11 +148,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 							currentBucketNode2 -> b2[nextAvailablePos2].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].destNum, destNum);
 
-							currentBucketNode2 -> b2[nextAvailablePos2].date = malloc((strlen(date)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].date, date);
+							currentBucketNode2 -> b2[nextAvailablePos2].date = ds;
 
-							currentBucketNode2 -> b2[nextAvailablePos2].time = malloc((strlen(time)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].time, time);
+							currentBucketNode2 -> b2[nextAvailablePos2].time = ts;
 
 							currentBucketNode2 -> b2[nextAvailablePos2].duration = duration;
 
@@ -182,11 +182,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 							currentBucketNode2 -> b2[0].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 							strcpy(currentBucketNode2 -> b2[0].destNum, destNum);
 
-							currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[0].date, date);
+							currentBucketNode2 -> b2[0].date = ds;
 
-							currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[0].time, time);
+							currentBucketNode2 -> b2[0].time = ts;
 
 							currentBucketNode2 -> b2[0].duration = duration;
 
@@ -216,11 +214,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 						currentBucketNode2 -> b2[0].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 						strcpy(currentBucketNode2 -> b2[0].destNum, destNum);
 
-						currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-						strcpy(currentBucketNode2 -> b2[0].date, date);
+						currentBucketNode2 -> b2[0].date = ds;
 
-						currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-						strcpy(currentBucketNode2 -> b2[0].time, time);
+						currentBucketNode2 -> b2[0].time = ts;
 
 						currentBucketNode2 -> b2[0].duration = duration;
 
@@ -262,11 +258,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode2 -> b2[0].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 				strcpy(currentBucketNode2 -> b2[0].destNum, destNum);
 
-				currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].date, date);
+				currentBucketNode2 -> b2[0].date = ds;
 
-				currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].time, time);
+				currentBucketNode2 -> b2[0].time = ts;
 
 				currentBucketNode2 -> b2[0].duration = duration;
 
@@ -306,11 +300,9 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode2 -> b2[0].destNum = malloc((strlen(destNum)+1) * sizeof(char));
 				strcpy(currentBucketNode2 -> b2[0].destNum, destNum);
 
-				currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].date, date);
+				currentBucketNode2 -> b2[0].date = ds;
 
-				currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].time, time);
+				currentBucketNode2 -> b2[0].time = ts;
 
 				currentBucketNode2 -> b2[0].duration = duration;
 
@@ -336,7 +328,11 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 	int key, nextAvailablePos1, nextAvailablePos2, numOfNodes2, i, j, flag1, flag2;
 	bucketNode1_callee *bn2, *head2, *currentBucketNode1;
 	bucketNode2_callee *currentBucketNode2;
+	dateStruct ds;
+	timeStruct ts;
 
+	ds = dateToIntegers(date);
+	ts = timeToIntegers(time);
 	key = hashFunction(destNum, HT2numOfEntries);
 
 	if(HT2[key].numOfNodes2 == 0)	//den exei ksanabei entry
@@ -363,11 +359,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 		bn2 -> b1[0].extraCDR -> b2[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 		strcpy(bn2 -> b1[0].extraCDR -> b2[0].origNum, origNum);
 
-		bn2 -> b1[0].extraCDR -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-		strcpy(bn2 -> b1[0].extraCDR -> b2[0].date, date);
+		bn2 -> b1[0].extraCDR -> b2[0].date = ds;
 
-		bn2 -> b1[0].extraCDR -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-		strcpy(bn2 -> b1[0].extraCDR -> b2[0].time, time);
+		bn2 -> b1[0].extraCDR -> b2[0].time = ts;
 
 		bn2 -> b1[0].extraCDR -> b2[0].duration = duration;
 		bn2 -> b1[0].extraCDR -> b2[0].type = type;
@@ -411,11 +405,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 							currentBucketNode2 -> b2[nextAvailablePos2].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].origNum, origNum);
 
-							currentBucketNode2 -> b2[nextAvailablePos2].date = malloc((strlen(date)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].date, date);
+							currentBucketNode2 -> b2[nextAvailablePos2].date = ds;
 
-							currentBucketNode2 -> b2[nextAvailablePos2].time = malloc((strlen(time)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[nextAvailablePos2].time, time);
+							currentBucketNode2 -> b2[nextAvailablePos2].time = ts;
 
 							currentBucketNode2 -> b2[nextAvailablePos2].duration = duration;
 
@@ -447,11 +439,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 							currentBucketNode2 -> b2[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 							strcpy(currentBucketNode2 -> b2[0].origNum, origNum);
 
-							currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[0].date, date);
+							currentBucketNode2 -> b2[0].date = ds;
 
-							currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-							strcpy(currentBucketNode2 -> b2[0].time, time);
+							currentBucketNode2 -> b2[0].time = ts;
 
 							currentBucketNode2 -> b2[0].duration = duration;
 
@@ -481,11 +471,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 						currentBucketNode2 -> b2[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 						strcpy(currentBucketNode2 -> b2[0].origNum, origNum);
 
-						currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-						strcpy(currentBucketNode2 -> b2[0].date, date);
+						currentBucketNode2 -> b2[0].date = ds;
 
-						currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-						strcpy(currentBucketNode2 -> b2[0].time, time);
+						currentBucketNode2 -> b2[0].time = ts;
 
 						currentBucketNode2 -> b2[0].duration = duration;
 
@@ -527,11 +515,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode2 -> b2[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 				strcpy(currentBucketNode2 -> b2[0].origNum, origNum);
 
-				currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].date, date);
+				currentBucketNode2 -> b2[0].date = ds;
 
-				currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].time, time);
+				currentBucketNode2 -> b2[0].time = ts;
 
 				currentBucketNode2 -> b2[0].duration = duration;
 
@@ -571,11 +557,9 @@ int insertCallee(hashTable2 *HT2, int HT2numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode2 -> b2[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 				strcpy(currentBucketNode2 -> b2[0].origNum, origNum);
 
-				currentBucketNode2 -> b2[0].date = malloc((strlen(date)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].date, date);
+				currentBucketNode2 -> b2[0].date = ds;
 
-				currentBucketNode2 -> b2[0].time = malloc((strlen(time)+1) * sizeof(char));
-				strcpy(currentBucketNode2 -> b2[0].time, time);
+				currentBucketNode2 -> b2[0].time = ts;
 
 				currentBucketNode2 -> b2[0].duration = duration;
 
