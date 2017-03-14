@@ -8,7 +8,7 @@
 #define DELETE "delete"
 #define FIND "find"
 #define LOOKUP "lookup"
-#define INDIST1 "indist1"
+#define INDIST1 "indist"
 #define TOPDEST "topdest"
 #define TOP "top"
 #define BYE "bye"

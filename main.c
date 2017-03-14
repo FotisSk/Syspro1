@@ -6,17 +6,19 @@
 #include "delete.h"
 #include "find.h"
 #include "lookup.h"
+#include "indist1.h"
 
 int main(int argc, char* argv[])
 {
 	int i, j, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, duration, type, tarrif, fault_condition, len, bucket1_maxEntries, bucket2_maxEntries, insertFlag, scenario;
 	char fileName[SIZE], fileLine[SIZE], userLine[SIZE];
-	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2;
+	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2, *caller1, *caller2;
 	hashTable1 *HT1;
 	hashTable2 *HT2;
+	indistList *a;
 	FILE *op;
 
-	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL;
+	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL; caller1 = NULL; caller2 = NULL;
 	
 	if(argc == 9)	//input apo arxeio
 	{
@@ -358,6 +360,21 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, INDIST1) == 0)
 				{
+					split = strtok(NULL, " \r\n");
+					len = strlen(split);
+					caller1 = malloc((len+1)*sizeof(char));
+					strcpy(caller1, split);
+
+					split = strtok(NULL, " \r\n");
+					len = strlen(split);
+					caller2 = malloc((len+1)*sizeof(char));
+					strcpy(caller2, split);
+
+					a = indist(HT1, HT1numOfEntries, HT2, HT2numOfEntries, caller1, caller2);
+					free(caller1);
+					caller1 = NULL;
+					free(caller2);
+					caller2 = NULL;
 
 				}
 				else if(strcmp(split, TOPDEST) == 0)
