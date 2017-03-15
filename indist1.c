@@ -8,9 +8,9 @@
 #include "lookup.h"
 #include "indist1.h"
 
-int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfEntries, char *phoneNum, indistList *headNode)
+int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfEntries, char *phoneNum, indistList *headNode, bucketNode2_caller *cbn2_caller)
 {
-	int numOfNodes, i, j, k, l, m, key1, key2, flag, deny;
+	int numOfNodes, i, j, k, l, m, key, foundYou, flag, deny;
 	subscriberNode *currentListNode, *previousListNode;
 	bucketNode1_caller *currentBucketNode1_caller;
 	bucketNode2_caller *currentBucketNode2_caller;
@@ -23,92 +23,116 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 	for(i=0; i<numOfNodes; i++)
 	{
 		if(strcmp(phoneNum, currentListNode -> phoneNum) == 0)
+		{
+			printf("'%s' already in the list\n", phoneNum);
 			return -1;
+		}
 		else
 			currentListNode = currentListNode -> next;
 	}
-	
+
+	//gia eiserxomenes
+	key = hashFunction(phoneNum, HT2numOfEntries);
+	currentBucketNode1_callee = HT2[key].head2;
+	foundYou = 0;
+	while(currentBucketNode1_callee && foundYou == 0)	
+	{
+		for(j=0; j<currentBucketNode1_callee -> nextAvailablePos; j++)
+		{
+			if(strcmp(phoneNum, currentBucketNode1_callee -> b1[j].destNum) == 0)
+			{
+				foundYou = 1;
+				currentBucketNode2_callee = currentBucketNode1_callee -> b1[j].extraCDR;
+				break;
+			}
+		}
+		currentBucketNode1_callee = currentBucketNode1_callee -> next;
+	}	
+
 	deny = 0;
 	currentListNode = headNode -> head;
 	for(i=0; i<numOfNodes; i++)
 	{
-		key1 = hashFunction(phoneNum, HT1numOfEntries);
-		currentBucketNode1_caller = HT1[key1].head1;
-		flag = 0;
-		while(currentBucketNode1_caller && flag == 0)
+		currentBucketNode2_caller = cbn2_caller;
+		while(currentBucketNode2_caller && deny == 0)
 		{
-			for(j=0; j<currentBucketNode1_caller -> nextAvailablePos; j++)
+			for(k=0; k<currentBucketNode2_caller -> nextAvailablePos; k++)
 			{
-				if(strcmp(phoneNum, currentBucketNode1_caller -> b1[j].origNum) == 0)
+				if(strcmp(currentListNode -> phoneNum, currentBucketNode2_caller -> b2[k].destNum) == 0)
 				{
-					flag = 1;
-					currentBucketNode2_caller = currentBucketNode1_caller -> b1[j].extraCDR;
-					while(currentBucketNode2_caller && deny == 0)
+					deny = 1;
+					//printf("Insert denied (1): '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
+					if(previousListNode)
 					{
-						for(k=0; k<currentBucketNode2_caller -> nextAvailablePos; k++)
-						{
-							if(strcmp(currentListNode -> phoneNum, currentBucketNode2_caller -> b2[k].destNum) == 0)
-							{
-								deny = 1;
-								printf("Insert denied. '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
-								break;
-							}
-						}
-						currentBucketNode2_caller = currentBucketNode2_caller -> next;
+						previousListNode -> next = currentListNode -> next;
+						free(currentListNode -> phoneNum);
+						currentListNode -> phoneNum = NULL;
+						free(currentListNode);
+						currentListNode = previousListNode -> next;
+						headNode -> numOfNodes--;
 					}
-				}
-				if(flag == 1)
+					else
+					{
+						headNode -> head = currentListNode -> next;
+						free(currentListNode -> phoneNum);
+						currentListNode -> phoneNum = NULL;
+						free(currentListNode);
+						currentListNode = headNode -> head;
+						headNode -> numOfNodes--;
+					}
 					break;
-
-			}//end for j
-
-			currentBucketNode1_caller = currentBucketNode1_caller -> next;
+				}
+			}
+			currentBucketNode2_caller = currentBucketNode2_caller -> next;
 		}
-
-
+		
 		if(deny == 0) //den vrike kati stis ekserxomenes, tora tha koitaksei tis eiserxomenes.
 		{
-			key2 = hashFunction(phoneNum, HT2numOfEntries);
-			currentBucketNode1_callee = HT2[key2].head2;
-			flag = 0;
-			while(currentBucketNode1_callee && flag == 0)
+			while(currentBucketNode2_callee && deny == 0)
 			{
-				for(l=0; l<currentBucketNode1_callee -> nextAvailablePos; l++)
+				for(m=0; m<currentBucketNode2_callee -> nextAvailablePos; m++)
 				{
-					if(strcmp(phoneNum, currentBucketNode1_callee -> b1[l].destNum) == 0)
+					if(strcmp(currentListNode -> phoneNum, currentBucketNode2_callee -> b2[m].origNum) == 0)
 					{
-						flag = 1;
-						currentBucketNode2_callee = currentBucketNode1_callee -> b1[l].extraCDR;
-						while(currentBucketNode2_callee && flag == 0)
+						deny = 1;
+						//printf("Insert denied (2): '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
+						if(previousListNode)
 						{
-							for(m=0; m<currentBucketNode2_callee -> nextAvailablePos; m++)
-							{
-								if(strcmp(currentListNode -> phoneNum, currentBucketNode2_callee -> b2[m].origNum) == 0)
-								{
-									deny = 1;
-									printf(" '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
-									break;
-								}
-							}
-							currentBucketNode2_callee = currentBucketNode2_callee -> next;
+							previousListNode -> next = currentListNode -> next;
+							free(currentListNode -> phoneNum);
+							currentListNode -> phoneNum = NULL;
+							free(currentListNode);
+							currentListNode = previousListNode -> next;
+							headNode -> numOfNodes--;
 						}
-					}
-					if(flag == 1)
+						else
+						{
+							headNode -> head = currentListNode -> next;
+							free(currentListNode -> phoneNum);
+							currentListNode -> phoneNum = NULL;
+							free(currentListNode);
+							currentListNode = headNode -> head;
+							headNode -> numOfNodes--;
+						}
 						break;
+					}
 				}
-				currentBucketNode1_callee = currentBucketNode1_callee -> next;
-			}
+				currentBucketNode2_callee = currentBucketNode2_callee -> next;
+			}	
 		}
-		if(i != numOfNodes -1)
+		if(i != numOfNodes -1 && deny == 0)
+		{
+			previousListNode = currentListNode;
 			currentListNode = currentListNode -> next;
-
+		}
 	}//end for i
+
 	if(deny == 0)
 	{
 		//tote mono kanei eisagogi sti lista ton sindromiti.
 		if(headNode -> numOfNodes == 0)
 		{
-			//printf("\n");
+			//printf("Insert Accepted (1): '%s'\n", phoneNum);
 			headNode -> head = malloc(sizeof(subscriberNode));
 			headNode -> head -> phoneNum = malloc((strlen(phoneNum)+1) * sizeof(char));
 			strcpy(headNode -> head -> phoneNum, phoneNum);
@@ -117,6 +141,7 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 		}
 		else
 		{
+			//printf("Insert Accepted (2): '%s'\n", phoneNum);
 			currentListNode -> next = malloc(sizeof(subscriberNode));
 			currentListNode -> next -> phoneNum = malloc((strlen(phoneNum)+1) * sizeof(char));
 			strcpy(currentListNode -> next -> phoneNum, phoneNum);
@@ -126,15 +151,17 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 	}
 }
 
-indistList* indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfEntries, char *caller1, char *caller2)
+void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfEntries, char *caller1, char *caller2)
 {
-	int i, j, k, l, m, n, subCount, flag1, flag2, key, foundYou;
+	int i, j, k, l, m, n, subCount, flag1, flag2, key, foundYou, numOfNodes;
 	char *phoneNum;
 	indistList *headNode;
+	subscriberNode *currentListNode;
 	bucketNode1_caller *currentBucketNode1_caller;
-	bucketNode2_caller *currentBucketNode2_caller;
+	bucketNode2_caller *currentBucketNode2_caller, *cbn2_caller;
 	bucketNode1_callee *currentBucketNode1_callee;
-	bucketNode2_callee *currentBucketNode2_callee;
+	bucketNode2_callee *currentBucketNode2_callee, *cbn2_callee;
+
 
 	headNode = malloc(sizeof(indistList));
 
@@ -160,6 +187,7 @@ indistList* indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT
 				strcpy(phoneNum, currentBucketNode1_caller -> b1[j].origNum);
 
 				currentBucketNode2_caller = currentBucketNode1_caller -> b1[j].extraCDR;
+				cbn2_caller = currentBucketNode2_caller;
 				subCount = 0;
 				flag1 = 0;
 				flag2 = 0;
@@ -199,6 +227,7 @@ indistList* indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT
 							{
 								foundYou = 1;
 								currentBucketNode2_callee = currentBucketNode1_callee -> b1[m].extraCDR;
+								//cbn2_callee = currentBucketNode2_callee; //orisma gia ti sinartisi
 								while(currentBucketNode2_callee && subCount < 2)
 								{
 									for(n=0; n<currentBucketNode2_callee -> nextAvailablePos; n++)
@@ -248,17 +277,15 @@ indistList* indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT
 					}
 					else if(subCount == 2)
 					{
-						printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
-						insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode);
+						//printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
+						insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode, cbn2_caller);
 					}
 				}
 				else if(subCount == 2)
 				{
-					printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
-					insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode);
+					//printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
+					insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode, cbn2_caller);
 				}
-				else
-					printf("we fucked up bro\n");
 
 				free(phoneNum);
 				phoneNum = NULL;
@@ -266,7 +293,32 @@ indistList* indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT
 			currentBucketNode1_caller = currentBucketNode1_caller -> next;
 		}
 	}//end for i
-
-	return headNode;
+	currentListNode = headNode -> head;
+	printf(" indist[%s, %s] -> ", headNode -> caller1, headNode -> caller2 );
+	for(i=0; i<headNode -> numOfNodes; i++)
+	{
+		printf("{%s} -> ", currentListNode -> phoneNum);
+		currentListNode = currentListNode -> next;
+	}	
+	printf("NULL \n");
+	
+	//apodesmeusi mnimis meta tin ektiposi
+	currentListNode = headNode -> head;
+	numOfNodes = headNode -> numOfNodes;
+	for(i=0; i<numOfNodes; i++)
+	{
+		headNode -> head = currentListNode -> next;
+		free(currentListNode -> phoneNum);
+		currentListNode -> phoneNum = NULL;
+		free(currentListNode);
+		currentListNode = headNode -> head;
+		headNode -> numOfNodes--;
+	}
+	free(headNode -> caller1);
+	free(headNode -> caller2);
+	headNode -> caller1 = NULL;
+	headNode -> caller2 = NULL;
+	free(headNode);
+	headNode = NULL;
 
 }

@@ -7,18 +7,20 @@
 #include "find.h"
 #include "lookup.h"
 #include "indist1.h"
+#include "topdest.h"
+#include "bye.h"
+
 
 int main(int argc, char* argv[])
 {
 	int i, j, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, duration, type, tarrif, fault_condition, len, bucket1_maxEntries, bucket2_maxEntries, insertFlag, scenario;
 	char fileName[SIZE], fileLine[SIZE], userLine[SIZE];
-	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2, *caller1, *caller2;
+	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2, *caller, *caller1, *caller2;
 	hashTable1 *HT1;
 	hashTable2 *HT2;
-	indistList *a;
 	FILE *op;
 
-	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL; caller1 = NULL; caller2 = NULL;
+	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL; caller = NULL; caller1 = NULL; caller2 = NULL;
 	
 	if(argc == 9)	//input apo arxeio
 	{
@@ -63,7 +65,6 @@ int main(int argc, char* argv[])
 		if(readFromFile == 1)
 		{
 			op = fopen(fileName, "r");
-			int counter = 0;
 			while(fgets(fileLine, SIZE, op) != NULL)
 			{
 				split = strtok(fileLine, " ;\r\n");
@@ -118,12 +119,7 @@ int main(int argc, char* argv[])
 					//klisi insert sinartisis
 					insertCaller(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
 					insertCallee(HT2, HT2numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
-					//counter++;
-					//if(counter == 22)
-					//{
-						//printf("here\n");
-					//}
-					//printf("counter: %d\n", counter);
+					
 					insertFlag = 1;
 					//free gia na min exoume leaks
 					free(cdr_uniq_id);
@@ -190,6 +186,8 @@ int main(int argc, char* argv[])
 
 								scenario = 1;
 								findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2);
+								free(origNum);
+								origNum = NULL;
 								free(time1);
 								time1 = NULL;
 								free(time2);
@@ -217,6 +215,8 @@ int main(int argc, char* argv[])
 									printf("> Wrong dates were given (date1 > date2)\n");
 									printf("|--------------------------------------------------------------------------------------------------------|\n");
 								}
+								free(origNum);
+								origNum = NULL;
 								free(time1);
 								time1 = NULL;
 								free(date1);
@@ -244,6 +244,8 @@ int main(int argc, char* argv[])
 								printf("> Wrong dates were given (date1 > date2)\n");
 								printf("|--------------------------------------------------------------------------------------------------------|\n");
 							}
+							free(origNum);
+							origNum = NULL;
 							free(date1);
 							date1 = NULL;
 							free(date2);
@@ -292,6 +294,8 @@ int main(int argc, char* argv[])
 
 								scenario = 1;
 								lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2);
+								free(destNum);
+								destNum = NULL;
 								free(time1);
 								time1 = NULL;
 								free(time2);
@@ -318,6 +322,8 @@ int main(int argc, char* argv[])
 									printf("> Wrong dates were given (date1 > date2)\n");
 									printf("|--------------------------------------------------------------------------------------------------------|\n");
 								}
+								free(destNum);
+								destNum = NULL;
 								free(time1);
 								time1 = NULL;
 								free(date1);
@@ -343,7 +349,9 @@ int main(int argc, char* argv[])
 							{
 								printf("> Wrong dates were given (date1 > date2)\n");
 								printf("|--------------------------------------------------------------------------------------------------------|\n");
-							}	
+							}
+							free(destNum);
+							destNum = NULL;	
 							free(date1);
 							date1 = NULL;
 							free(date2);
@@ -370,7 +378,7 @@ int main(int argc, char* argv[])
 					caller2 = malloc((len+1)*sizeof(char));
 					strcpy(caller2, split);
 
-					a = indist(HT1, HT1numOfEntries, HT2, HT2numOfEntries, caller1, caller2);
+					indist(HT1, HT1numOfEntries, HT2, HT2numOfEntries, caller1, caller2);
 					free(caller1);
 					caller1 = NULL;
 					free(caller2);
@@ -379,7 +387,14 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, TOPDEST) == 0)
 				{
+					split = strtok(NULL, " \r\n");
+					len = strlen(split);
+					caller = malloc((len+1)*sizeof(char));
+					strcpy(caller, split);
 
+					topDestCaller(HT1, HT1numOfEntries, caller);
+					free(caller);
+					caller = NULL;
 				}
 				else if(strcmp(split, TOP) == 0)
 				{
@@ -387,7 +402,8 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, BYE) == 0)
 				{
-
+					ragnarok1(HT1, HT1numOfEntries);
+					ragnarok2(HT2, HT2numOfEntries);
 				}
 				else if(strcmp(split, PRINT) == 0)
 				{
@@ -437,5 +453,7 @@ int main(int argc, char* argv[])
 
 
 	printf("h1: %d, h2: %d, bucketSize: %d and filename: %s\n",HT1numOfEntries, HT2numOfEntries, bucketSize, fileName);
+	free(HT1);
+	free(HT2);
 	return 0;
 }

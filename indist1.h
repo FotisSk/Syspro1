@@ -16,7 +16,7 @@ typedef struct indistList
 	subscriberNode *head;
 }indistList;
 
-int insertToIndistList(hashTable1 *, int, hashTable2 *, int, char *, indistList *);
-indistList* indist(hashTable1 *, int , hashTable2 *, int , char *, char *);
+int insertToIndistList(hashTable1 *, int, hashTable2 *, int, char *, indistList *, bucketNode2_caller *);
+void indist(hashTable1 *, int , hashTable2 *, int , char *, char *);
 
 #endif
