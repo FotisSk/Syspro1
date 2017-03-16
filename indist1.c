@@ -24,7 +24,7 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 	{
 		if(strcmp(phoneNum, currentListNode -> phoneNum) == 0)
 		{
-			printf("'%s' already in the list\n", phoneNum);
+			//printf("'%s' already in the list\n", phoneNum);
 			return -1;
 		}
 		else
@@ -294,14 +294,21 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 		}
 	}//end for i
 	currentListNode = headNode -> head;
-	printf(" indist[%s, %s] -> ", headNode -> caller1, headNode -> caller2 );
-	for(i=0; i<headNode -> numOfNodes; i++)
+
+	//printf("indist[%s, %s]\n", headNode -> caller1, headNode -> caller2 );
+
+	if(headNode -> numOfNodes == 0)
+		printf("No indist found\n");
+	else
 	{
-		printf("{%s} -> ", currentListNode -> phoneNum);
-		currentListNode = currentListNode -> next;
-	}	
-	printf("NULL \n");
-	
+		for(i=0; i<headNode -> numOfNodes; i++)
+		{
+			printf("%s\n", currentListNode -> phoneNum);
+			currentListNode = currentListNode -> next;
+		}
+		//printf("\n");
+	}
+	printf("******************\n");	
 	//apodesmeusi mnimis meta tin ektiposi
 	currentListNode = headNode -> head;
 	numOfNodes = headNode -> numOfNodes;

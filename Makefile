@@ -1,5 +1,5 @@
-all: main.o insert.o delete.o find.o lookup.o indist1.o topdest.o bye.o
-	gcc -o werhauz main.o insert.o delete.o find.o lookup.o indist1.o topdest.o bye.o -g
+all: main.o insert.o delete.o find.o lookup.o indist1.o topdest.o bye.o print.o
+	gcc -o werhauz main.o insert.o delete.o find.o lookup.o indist1.o topdest.o bye.o print.o -g
 
 main.o: main.c
 	gcc -g -c main.c
@@ -24,4 +24,7 @@ topdest.o: topdest.c
 
 bye.o: bye.c
 	gcc -c -g bye.c
+
+print.o: print.c
+	gcc -c -g print.c
 

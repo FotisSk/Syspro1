@@ -28,7 +28,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 			{
 				if(currentBucketNode1 -> b1[j].numOfNodes2 == 0)
 				{
-					printf("Error: No calls found from caller '%s'\n", origNum);
+					printf("DError (No calls found from caller '%s')\n", origNum);
 					return -1;
 				}
 				flag1 = 1;
@@ -60,6 +60,8 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 							currentBucketNode2 -> b2[k].type = 0;
 							currentBucketNode2 -> b2[k].tarrif = 0;
 							currentBucketNode2 -> b2[k].fault_condition = 0;
+
+							printf("Deleted %s\n", cdr_uniq_id);
 
 							if(k < currentBucketNode2 -> nextAvailablePos - 1)	//tote den esvises tin teleutaia sto bucket2 opote thelei mia anadiataksi.
 							{
@@ -138,7 +140,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 				}
 				if(flag2 == 0)
 				{
-					printf("Error: Caller '%s' has no call with cdr_uniq_id '%s'\n", origNum, cdr_uniq_id);
+					printf("DError  (Caller '%s' has no call with cdr_uniq_id '%s')\n", origNum, cdr_uniq_id);
 					return -1;
 				}
 			}
@@ -151,7 +153,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 	}
 	if(flag1 == 0)
 	{
-		printf("Error: Caller '%s' not found.\n", origNum);
+		printf("DError (Caller '%s' not found)\n", origNum);
 		return -1;
 	}
 }

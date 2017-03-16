@@ -47,9 +47,15 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 
 	if(flag == 0)
 	{
-		printf("Caller '%s' not found.\n", caller);
+		printf("No calls found (caller %s not found)\n", caller);
 		return;
 	}
+	if(currentBucketNode1 -> b1[i].numOfNodes2 == 0)
+	{
+		printf("No calls found (caller %s)\n", caller);
+		return;
+	}
+
 	currentBucketNode2 = initialBucketNode2;
 	while(currentBucketNode2)
 	{
@@ -102,7 +108,7 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 	maxListNode = NULL;
 	maxCalls = 0;
 	currentListNode = headNode -> head;
-	printf("*** TOPDEST %s ***\n", caller);
+	//printf("*** TOPDEST %s ***\n", caller);
 	for(k=0; k<headNode -> numOfNodes; k++)
 	{
 		if(currentListNode -> timesCalled > maxCalls)
@@ -112,17 +118,17 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 		}
 		currentListNode = currentListNode -> next;
 	}
-	printf("| Code: %s | Times Called: %d|\n", maxListNode -> code, maxCalls);
+	printf("Code: %s, Times Called: %d\n", maxListNode -> code, maxCalls);
 
 	currentListNode = headNode -> head;
 	for(k=0; k<headNode -> numOfNodes; k++)
 	{
 		if(currentListNode -> timesCalled == maxCalls && currentListNode != maxListNode)
-			printf("| Code: %s | Times Called: %d|\n", currentListNode -> code, currentListNode -> timesCalled);
+			printf("Code: %s, Times Called: %d\n", currentListNode -> code, currentListNode -> timesCalled);
 
 		currentListNode = currentListNode -> next;
 	}
-	printf("******************************\n\n");
+	printf("**************************\n");
 
 	//apodesmeusi listas
 	numOfListNodes = headNode -> numOfNodes;

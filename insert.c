@@ -89,6 +89,7 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 		bn1 -> b1[0].origNum = malloc((strlen(origNum)+1) * sizeof(char));
 		strcpy(bn1 -> b1[0].origNum, origNum);
 		bn1 -> b1[0].numOfNodes2 = 1;
+		bn1 -> b1[0].heapPtr = NULL;
 
 		bn1 -> b1[0].extraCDR = malloc(sizeof(bucketNode2_caller));
 		bn1 -> b1[0].extraCDR -> nextAvailablePos = 1;	//1 kai oxi 0 giati vazo entry sto bucket parallila
@@ -243,6 +244,7 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 
 				currentBucketNode1 -> b1[nextAvailablePos1].extraCDR = malloc(sizeof(bucketNode2_caller));
 				currentBucketNode1 -> b1[nextAvailablePos1].numOfNodes2 = 1;
+				currentBucketNode1 -> b1[nextAvailablePos1].heapPtr = NULL;
 
 				currentBucketNode1 -> nextAvailablePos++;
 
@@ -286,6 +288,7 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 
 				currentBucketNode1 -> b1[0].extraCDR = malloc(sizeof(bucketNode2_caller));
 				currentBucketNode1 -> b1[0].numOfNodes2 = 1;
+				currentBucketNode1 -> b1[0].heapPtr = NULL;
 
 				currentBucketNode2 = currentBucketNode1 -> b1[0].extraCDR;
 

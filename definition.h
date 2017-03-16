@@ -13,7 +13,40 @@
 #define TOP "top"
 #define BYE "bye"
 #define PRINT "print"
-#define DUMP "dump"
+
+/******************** HEAP ********************/
+
+typedef struct heapNode
+{
+	int nodeNum;
+	char *subscriber;
+	double amount;
+	struct heapNode *father;
+	struct heapNode *leftChild;
+	struct heapNode *rightChild;
+}heapNode;
+
+typedef struct heap
+{
+	int numOfNodes;
+	heapNode *head;
+}heap;
+/*********************************************/
+
+
+/******************* EXTRAS *******************/
+typedef struct charge
+{
+	int type;
+	int tarrif;
+	double cost;
+}charge;
+
+typedef struct chargeListNode
+{
+	charge c;
+	struct chargeListNode *next;
+}chargeListNode;
 
 typedef struct dateStruct
 {
@@ -28,6 +61,8 @@ typedef struct timeStruct
 	int minutes;
 	int totalMinutes;
 }timeStruct;
+/**********************************************/
+
 
 /******************** CALLER ********************/
 typedef struct bucket2_caller //light pink
@@ -53,7 +88,8 @@ typedef struct bucket1_caller //blue
 {
 	char *origNum;
 	bucketNode2_caller *extraCDR;
-	int numOfNodes2;	
+	int numOfNodes2;
+	heapNode *heapPtr;	
 }bucket1_caller;
 
 typedef struct bucketNode1_caller
@@ -63,6 +99,7 @@ typedef struct bucketNode1_caller
 	struct bucketNode1_caller *next;
 }bucketNode1_caller;
 /***********************************************/
+
 
 /******************** CALLEE ********************/
 typedef struct bucket2_callee
@@ -115,11 +152,5 @@ typedef struct hashTable2
 	bucketNode1_callee *head2;
 }hashTable2;
 /**************************************************/
-
-
-
-
-
-
 
 #endif
