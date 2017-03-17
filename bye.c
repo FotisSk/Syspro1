@@ -10,7 +10,7 @@
 #include "topdest.h"
 #include "bye.h"
 
-void ragnarok1(hashTable1 *HT1, int HT1numOfEntries)
+void ragnarok1(heap *hp, hashTable1 *HT1, int HT1numOfEntries)
 {
 	int i, j, k;
 	bucketNode1_caller *currentBucketNode1;
@@ -46,6 +46,11 @@ void ragnarok1(hashTable1 *HT1, int HT1numOfEntries)
 				}
 				free(currentBucketNode1 -> b1[j].origNum);
 				currentBucketNode1 -> b1[j].origNum = NULL;
+				free(currentBucketNode1 -> b1[j].heapPtr -> subscriber);
+				currentBucketNode1 -> b1[j].heapPtr -> subscriber = NULL;
+				free(currentBucketNode1 -> b1[j].heapPtr);
+				currentBucketNode1 -> b1[j].heapPtr = NULL;
+				hp -> numOfNodes--;
 			}
 			free(currentBucketNode1 -> b1);
 			currentBucketNode1 -> b1 = NULL;
@@ -56,6 +61,7 @@ void ragnarok1(hashTable1 *HT1, int HT1numOfEntries)
 		}
 		HT1[i].numOfNodes1 = 0;
 	}
+	hp -> head = NULL;
 	//free(HT1);
 }
 
