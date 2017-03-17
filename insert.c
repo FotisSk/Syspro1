@@ -342,42 +342,10 @@ int insertNode(heap *hp, bucketNode1_caller *bucketNode1_child, int pos_child, h
 
 	
 	nodeToInsert = hp -> numOfNodes + 1;
-	fatherNodeNum = nodeToInsert / 2;
-
-	if(nodeToInsert != 1)
-	{
-		//vres ton patera
-		fatherFound = 0;
-		for(i=0; i<HT1numOfEntries; i++)
-		{
-			currentBucketNode1 = HT1[i].head1;
-			while(currentBucketNode1 && fatherFound == 0)
-			{
-				pos_father = 0;
-				for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
-				{
-					if(currentBucketNode1 -> b1[j].heapPtr -> nodeNum == fatherNodeNum)
-					{
-						fatherFound = 1;
-						bucketNode1_father = currentBucketNode1;
-						pos_father = j;
-						break;
-					}
-				}
-				if(fatherFound == 0)
-					currentBucketNode1 = currentBucketNode1 -> next;
-			}
-			if(fatherFound == 1)
-				break;
-		}
-		//^
-	}
 
 	//dimiourgise ton komvo kai dostou times
 	hnode = malloc(sizeof(heapNode));
-
 	hnode -> nodeNum = nodeToInsert;
-
 	hnode -> subscriber = malloc((strlen(origNum)+1) * sizeof(char));
 	strcpy(hnode -> subscriber, origNum);
 
@@ -411,27 +379,53 @@ int insertNode(heap *hp, bucketNode1_caller *bucketNode1_child, int pos_child, h
 	hnode -> leftChild = NULL;
 	hnode -> rightChild = NULL;
 
-	if(nodeToInsert == 1)
+	bucketNode1_child -> b1[pos_child].heapPtr = hnode;
+
+	//hnode -> father = ?
+	if(nodeToInsert != 1)
+	{
+		fatherNodeNum = nodeToInsert / 2;
+		fatherFound = 0;
+		pos_father = 0;
+		for(i=0; i<HT1numOfEntries; i++)
+		{
+			currentBucketNode1 = HT1[i].head1;
+			while(currentBucketNode1 && fatherFound == 0)
+			{
+				for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
+				{
+					if(currentBucketNode1 -> b1[j].heapPtr -> nodeNum == fatherNodeNum)
+					{
+						fatherFound = 1;
+						bucketNode1_father = currentBucketNode1;
+						pos_father = j;
+						break;
+					}
+				}
+				if(fatherFound == 0)
+					currentBucketNode1 = currentBucketNode1 -> next;
+			}
+			if(fatherFound == 1)
+				break;
+		}
+		hnode -> father = bucketNode1_father -> b1[pos_father].heapPtr;
+		if(nodeToInsert % 2 == 0)
+			hnode -> father -> leftChild = hnode;
+		else
+			hnode -> father -> rightChild = hnode;
+		
+		hp -> numOfNodes++;
+		childPtr = hnode;
+		//i eisagogi tou komvou teleiose edo. tora prepei na doume an diatireitai i idiotita tou max heap
+		heapify(hp, childPtr);
+	}
+	else	//nodeToInsert = 1;
 	{
 		hp -> head = hnode;
 		hnode -> father = NULL;
-		hp -> numOfNodes++;
-		bucketNode1_child -> b1[pos_child].heapPtr = hnode;
-		return 1;
+		hp -> numOfNodes++;	
 	}
-	
-	hnode -> father = bucketNode1_father -> b1[pos_father].heapPtr;
-	if(nodeToInsert % 2 == 0)
-		hnode -> father -> leftChild = hnode;
-	else
-		hnode -> father -> rightChild = hnode;
-	
 
-	hp -> numOfNodes++;
-	bucketNode1_child -> b1[pos_child].heapPtr = hnode;
-	//i eisagogi tou komvou teleiose edo. tora prepei na doume an diatireitai i idiotita tou max heap
-	childPtr = hnode;
-	heapify(hp, childPtr, bucketNode1_child, pos_child);
 	return 1;
 }
 
@@ -513,10 +507,10 @@ int updateNode(heap *hp, bucketNode1_caller *currentBucketNode1, int pos_child, 
 		childPtr -> amount += 0;
 
 	if(childPtr -> nodeNum != 1)
-		heapify(hp, childPtr, currentBucketNode1, pos_child);
+		heapify(hp, childPtr);//, currentBucketNode1, pos_child);
 }
 
-int heapify(heap *hp, heapNode *childPtr, bucketNode1_caller *bucketNode1_child, int pos_child)
+int heapify(heap *hp, heapNode *childPtr)//, bucketNode1_caller *bucketNode1_child, int pos_child)
 {
 	int nodeNumTemp, bucketPosTemp;
 	double amountTemp;
@@ -528,11 +522,6 @@ int heapify(heap *hp, heapNode *childPtr, bucketNode1_caller *bucketNode1_child,
 
 	while(childPtr -> amount > fatherPtr -> amount)	//kane swap
 	{
-		//nodeNum
-		//nodeNumTemp = fatherPtr -> nodeNum;
-		//fatherPtr -> nodeNum = childPtr -> nodeNum;
-		//childPtr -> nodeNum = nodeNumTemp;
-
 		//bucketPos
 		bucketPosTemp = fatherPtr -> bucketPos;
 		fatherPtr -> bucketPos = childPtr -> bucketPos;
