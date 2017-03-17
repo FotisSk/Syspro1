@@ -14,13 +14,15 @@
 #define BYE "bye"
 #define PRINT "print"
 
+typedef struct bucketNode1_caller bucketNode1_caller;
 /******************** HEAP ********************/
-
 typedef struct heapNode
 {
 	int nodeNum;
 	char *subscriber;
 	double amount;
+	bucketNode1_caller *bucketNodePtr;
+	int bucketPos;
 	struct heapNode *father;
 	struct heapNode *leftChild;
 	struct heapNode *rightChild;
@@ -32,7 +34,6 @@ typedef struct heap
 	heapNode *head;
 }heap;
 /*********************************************/
-
 
 /******************* EXTRAS *******************/
 typedef struct charge
@@ -92,12 +93,12 @@ typedef struct bucket1_caller //blue
 	heapNode *heapPtr;	
 }bucket1_caller;
 
-typedef struct bucketNode1_caller
+struct bucketNode1_caller
 {
 	int nextAvailablePos;
 	bucket1_caller *b1;
 	struct bucketNode1_caller *next;
-}bucketNode1_caller;
+};
 /***********************************************/
 
 

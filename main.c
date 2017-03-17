@@ -23,6 +23,13 @@ int main(int argc, char* argv[])
 	FILE *op, *billing;
 	charge c;
 	chargeListNode *ptr, *headNodeCharge, *currentListNode;
+	heap *hp;
+
+	//heap
+	hp = malloc(sizeof(heap));
+	hp -> numOfNodes = 0;
+	hp -> head = NULL;
+	//
 
 	cdr_uniq_id = NULL; origNum = NULL; destNum = NULL; date = NULL; time = NULL; time1 = NULL; time1 = NULL; date1 = NULL; date2 = NULL; caller = NULL; caller1 = NULL; caller2 = NULL;
 	fileInput = 0;
@@ -156,7 +163,7 @@ int main(int argc, char* argv[])
 						printf("MAX ENTRIES: b1=%d, b2=%d\n", bucket1_maxEntries, bucket2_maxEntries);
 					}
 					//klisi insert sinartisis
-					insertCaller(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+					insertCaller(hp, HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition, headNodeCharge);
 					insertCallee(HT2, HT2numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
 					
 					insertFlag = 1;
@@ -441,8 +448,9 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, BYE) == 0)
 				{
-					ragnarok1(HT1, HT1numOfEntries);
+					ragnarok1(hp, HT1, HT1numOfEntries);
 					ragnarok2(HT2, HT2numOfEntries);
+					printf("Structures emptied. Ready for reuse\n");
 				}
 				else if(strcmp(split, PRINT) == 0)
 				{
@@ -454,6 +462,8 @@ int main(int argc, char* argv[])
 					else
 						printf("Wrong argument. Try 'hashtable1' or 'hashtable2'\n");
 				}
+				else
+					printf("Wrong command was given\n");
 			}//end_while
 			fclose(op);
 		}
@@ -534,6 +544,7 @@ int main(int argc, char* argv[])
 	/******************************************************************************************/
 	/***************************************** USER ******************************************/
 	printf("You are in control now.\n");
+	//fflush(stdin);
 	while(fgets(userLine, SIZE, stdin) != NULL)
 	{
 		split = strtok(userLine, " ;\r\n");
@@ -583,7 +594,7 @@ int main(int argc, char* argv[])
 				printf("MAX ENTRIES: b1=%d, b2=%d\n", bucket1_maxEntries, bucket2_maxEntries);
 			}
 			//klisi insert sinartisis
-			insertCaller(HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
+			insertCaller(hp, HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition, headNodeCharge);
 			insertCallee(HT2, HT2numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition);
 					
 			insertFlag = 1;
@@ -867,8 +878,9 @@ int main(int argc, char* argv[])
 		}
 		else if(strcmp(split, BYE) == 0)
 		{
-			ragnarok1(HT1, HT1numOfEntries);
+			ragnarok1(hp, HT1, HT1numOfEntries);
 			ragnarok2(HT2, HT2numOfEntries);
+			printf("Structures emptied. Ready for reuse\n");
 		}
 		else if(strcmp(split, PRINT) == 0)
 		{
@@ -880,6 +892,9 @@ int main(int argc, char* argv[])
 			else
 				printf("Wrong argument. Try 'hashtable1' or 'hashtable2'\n");
 		}
+		else
+			printf("Wrong command was given\n");
+
 		memset(userLine, 0, SIZE);
 	}//end while	
 
@@ -895,8 +910,9 @@ int main(int argc, char* argv[])
 		currentListNode = headNodeCharge;
 	}
 	//klisi sinartiseon katharismou mnimis se periptosi pou de dithei bye oute apo to arxeio oute kai apo ton xristi
-	ragnarok1(HT1, HT1numOfEntries);
+	ragnarok1(hp, HT1, HT1numOfEntries);
 	ragnarok2(HT2, HT2numOfEntries);
+	free(hp);
 	free(HT1);
 	free(HT2);
 	return 0;
