@@ -63,9 +63,9 @@ timeStruct timeToIntegers(char *time)
 
 /*********************************************************************************************************************/
 /****************************************************** CALLER ******************************************************/
-int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int bucket2_maxEntries,
+int insertCaller(heap *hp, hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, int bucket2_maxEntries,
  char *cdr_uniq_id, char *origNum, char *destNum, char *date, char *time,
-  int duration, int type, int tarrif, int fault_condition)
+  int duration, int type, int tarrif, int fault_condition, chargeListNode *chargeListHead)
 {
 	int key, nextAvailablePos1, nextAvailablePos2, numOfNodes1, i, j, flag1, flag2;
 	bucketNode1_caller *bn1, *head1, *currentBucketNode1;
@@ -90,6 +90,8 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 		strcpy(bn1 -> b1[0].origNum, origNum);
 		bn1 -> b1[0].numOfNodes2 = 1;
 		bn1 -> b1[0].heapPtr = NULL;
+
+		insertNode(hp, bn1, 0, HT1, HT1numOfEntries, origNum, duration, type, tarrif, fault_condition, chargeListHead);
 
 		bn1 -> b1[0].extraCDR = malloc(sizeof(bucketNode2_caller));
 		bn1 -> b1[0].extraCDR -> nextAvailablePos = 1;	//1 kai oxi 0 giati vazo entry sto bucket parallila
@@ -125,6 +127,7 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 			{
 				if(strcmp(currentBucketNode1 -> b1[j].origNum, origNum) == 0)	//an vreis to tilefono tote pigaine na deis ama xorane ta kainourgia extraCDR.
 				{
+					updateNode(hp, currentBucketNode1, j, duration, type, tarrif, fault_condition, chargeListHead);
 					if(currentBucketNode1 -> b1[j].extraCDR)	//an den einai null to extraCDR apo deletes.
 					{
 
@@ -246,6 +249,8 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode1 -> b1[nextAvailablePos1].numOfNodes2 = 1;
 				currentBucketNode1 -> b1[nextAvailablePos1].heapPtr = NULL;
 
+				insertNode(hp, currentBucketNode1, nextAvailablePos1, HT1, HT1numOfEntries, origNum, duration, type, tarrif, fault_condition, chargeListHead);
+
 				currentBucketNode1 -> nextAvailablePos++;
 
 				currentBucketNode2 = currentBucketNode1 -> b1[nextAvailablePos1].extraCDR;
@@ -290,6 +295,8 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 				currentBucketNode1 -> b1[0].numOfNodes2 = 1;
 				currentBucketNode1 -> b1[0].heapPtr = NULL;
 
+				insertNode(hp, currentBucketNode1, 0, HT1, HT1numOfEntries, origNum, duration, type, tarrif, fault_condition, chargeListHead);
+
 				currentBucketNode2 = currentBucketNode1 -> b1[0].extraCDR;
 
 				currentBucketNode2 -> nextAvailablePos = 1;
@@ -315,11 +322,303 @@ int insertCaller(hashTable1 *HT1, int HT1numOfEntries, int bucket1_maxEntries, i
 
 				currentBucketNode2 -> b2[0].fault_condition = fault_condition;
 				/***/
+
 			}
 		}
 	}	
 	
 }
+
+
+/*************************************************************************************************************************/
+/******************************************************* HEAP ***********************************************************/
+int insertNode(heap *hp, bucketNode1_caller *bucketNode1_child, int pos_child, hashTable1 *HT1, int HT1numOfEntries,
+				 char *origNum, int duration, int type, int tarrif, int fault_condition, chargeListNode *chargeListHead)
+{
+	int nodeToInsert, fatherNodeNum, i, j, fatherFound, pos_father;
+	heapNode *hnode, *childPtr;
+	chargeListNode *currentChargeListNode;
+	bucketNode1_caller *currentBucketNode1, *bucketNode1_father;
+
+	
+	nodeToInsert = hp -> numOfNodes + 1;
+	fatherNodeNum = nodeToInsert / 2;
+
+	if(nodeToInsert != 1)
+	{
+		//vres ton patera
+		fatherFound = 0;
+		for(i=0; i<HT1numOfEntries; i++)
+		{
+			currentBucketNode1 = HT1[i].head1;
+			while(currentBucketNode1 && fatherFound == 0)
+			{
+				pos_father = 0;
+				for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
+				{
+					if(currentBucketNode1 -> b1[j].heapPtr -> nodeNum == fatherNodeNum)
+					{
+						fatherFound = 1;
+						bucketNode1_father = currentBucketNode1;
+						pos_father = j;
+						break;
+					}
+				}
+				if(fatherFound == 0)
+					currentBucketNode1 = currentBucketNode1 -> next;
+			}
+			if(fatherFound == 1)
+				break;
+		}
+		//^
+	}
+
+	//dimiourgise ton komvo kai dostou times
+	hnode = malloc(sizeof(heapNode));
+
+	hnode -> nodeNum = nodeToInsert;
+
+	hnode -> subscriber = malloc((strlen(origNum)+1) * sizeof(char));
+	strcpy(hnode -> subscriber, origNum);
+
+	if(fault_condition >= 200 && fault_condition < 300)
+	{
+		currentChargeListNode = chargeListHead;
+		while(currentChargeListNode)
+		{
+			if(currentChargeListNode -> c.type == type && currentChargeListNode -> c.tarrif == tarrif)
+			{
+				if(type == 0 && tarrif == 0)
+				{
+					hnode -> amount = currentChargeListNode -> c.cost;
+					break;
+				}
+				else
+				{
+					hnode -> amount = (currentChargeListNode -> c.cost) * (double)duration;
+					break;
+				}
+			}
+				
+			currentChargeListNode = currentChargeListNode -> next;
+		}
+	}
+	else
+		hnode -> amount = 0;
+
+	hnode -> bucketNodePtr = bucketNode1_child;	
+	hnode -> bucketPos = pos_child;
+	hnode -> leftChild = NULL;
+	hnode -> rightChild = NULL;
+
+	if(nodeToInsert == 1)
+	{
+		hp -> head = hnode;
+		hnode -> father = NULL;
+		hp -> numOfNodes++;
+		bucketNode1_child -> b1[pos_child].heapPtr = hnode;
+		return 1;
+	}
+	
+	hnode -> father = bucketNode1_father -> b1[pos_father].heapPtr;
+	if(nodeToInsert % 2 == 0)
+		hnode -> father -> leftChild = hnode;
+	else
+		hnode -> father -> rightChild = hnode;
+	
+
+	hp -> numOfNodes++;
+	bucketNode1_child -> b1[pos_child].heapPtr = hnode;
+	//i eisagogi tou komvou teleiose edo. tora prepei na doume an diatireitai i idiotita tou max heap
+	childPtr = hnode;
+	heapify(hp, childPtr, bucketNode1_child, pos_child);
+	return 1;
+}
+
+	/*
+	else	//an to heap einai adeio
+	{
+		hnode = malloc(sizeof(heapNode));
+		hnode -> nodeNum = 1;	//allios, hp -> numOfNodes + 1;
+
+		hnode -> subscriber = malloc((strlen(origNum)+1) * sizeof(char));
+		strcpy(hnode -> subscriber, origNum);
+
+		if(fault_condition >= 200 && fault_condition < 300)
+		{
+			currentChargeListNode = chargeListHead;
+			while(currentChargeListNode)
+			{
+				if(currentChargeListNode -> c.type == type && currentChargeListNode -> c.tarrif == tarrif)
+				{
+					if(type == 0 && tarrif == 0)
+					{
+						hnode -> amount = currentChargeListNode -> c.cost;
+						break;
+					}
+					else
+					{
+						hnode -> amount = (currentChargeListNode -> c.cost) * (double)duration;
+						break;
+					}
+				}
+				
+				currentChargeListNode = currentChargeListNode -> next;
+			}
+		}
+		else
+			hnode -> amount = 0;
+
+		hnode -> father = NULL;
+		hnode -> leftChild = NULL;
+		hnode -> rightChild = NULL;
+
+		hp -> numOfNodes++;
+		hp -> head = hnode;
+
+		bucketNode1_child -> b1[pos_child].heapPtr = hnode;
+
+	}
+	*/
+
+int updateNode(heap *hp, bucketNode1_caller *currentBucketNode1, int pos_child, int duration, int type, int tarrif, int fault_condition, chargeListNode *chargeListHead)
+{
+	heapNode *childPtr;
+	chargeListNode *currentChargeListNode;
+
+	childPtr = currentBucketNode1 -> b1[pos_child].heapPtr;
+	if(fault_condition >= 200 && fault_condition < 300)
+	{
+		currentChargeListNode = chargeListHead;
+		while(currentChargeListNode)
+		{
+			if(currentChargeListNode -> c.type == type && currentChargeListNode -> c.tarrif == tarrif)
+			{
+				if(type == 0 && tarrif == 0)
+				{
+					childPtr -> amount += currentChargeListNode -> c.cost;
+					break;
+				}
+				else
+				{
+					childPtr -> amount = (childPtr -> amount) + (currentChargeListNode -> c.cost) * (double)duration;
+					break;
+				}
+			}
+				
+			currentChargeListNode = currentChargeListNode -> next;
+		}
+	}
+	else
+		childPtr -> amount += 0;
+
+	if(childPtr -> nodeNum != 1)
+		heapify(hp, childPtr, currentBucketNode1, pos_child);
+}
+
+int heapify(heap *hp, heapNode *childPtr, bucketNode1_caller *bucketNode1_child, int pos_child)
+{
+	int nodeNumTemp, bucketPosTemp;
+	double amountTemp;
+	char *subscriberTemp;
+	heapNode *fatherPtr;
+	bucketNode1_caller *bucketNodePtrTemp;
+
+	fatherPtr = childPtr -> father;
+
+	while(childPtr -> amount > fatherPtr -> amount)	//kane swap
+	{
+		//nodeNum
+		//nodeNumTemp = fatherPtr -> nodeNum;
+		//fatherPtr -> nodeNum = childPtr -> nodeNum;
+		//childPtr -> nodeNum = nodeNumTemp;
+
+		//bucketPos
+		bucketPosTemp = fatherPtr -> bucketPos;
+		fatherPtr -> bucketPos = childPtr -> bucketPos;
+		childPtr -> bucketPos = bucketPosTemp;
+		//amount
+		amountTemp = fatherPtr -> amount;
+		fatherPtr -> amount = childPtr -> amount;
+		childPtr -> amount = amountTemp;
+		//subscriber
+		subscriberTemp = malloc((strlen(fatherPtr -> subscriber)+1) * sizeof(char));
+		strcpy(subscriberTemp, fatherPtr -> subscriber);
+
+		free(fatherPtr -> subscriber);
+		fatherPtr -> subscriber = malloc((strlen(childPtr -> subscriber)+1) * sizeof(char));
+		strcpy(fatherPtr -> subscriber, childPtr -> subscriber);
+
+		free(childPtr -> subscriber);
+		childPtr -> subscriber = malloc((strlen(subscriberTemp)+1) * sizeof(char));
+		strcpy(childPtr -> subscriber, subscriberTemp);
+
+		free(subscriberTemp);
+		subscriberTemp = NULL;
+
+		//pointers
+		childPtr -> bucketNodePtr -> b1[fatherPtr -> bucketPos].heapPtr = fatherPtr;
+		bucketNodePtrTemp = childPtr -> bucketNodePtr;
+		childPtr -> bucketNodePtr = fatherPtr -> bucketNodePtr;
+		fatherPtr -> bucketNodePtr -> b1[childPtr -> bucketPos].heapPtr = childPtr;
+		fatherPtr -> bucketNodePtr = bucketNodePtrTemp;
+		//
+		if(!fatherPtr -> father) //an o pateras tou patera einai null, tote allaksame ton headNode to heap mas.
+		{
+			hp -> head = fatherPtr;
+			return 2;
+		}
+		//go next
+		childPtr = childPtr -> father;
+		fatherPtr = fatherPtr -> father;
+	}
+	return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*********************************************************************************************************************/
