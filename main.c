@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 				bucketSize = atoi(argv[i+1]);
 			else
 			{
-				printf("Wrong flag was given.\n");
+				printf("Wrong flag was given\n");
 				return -1;
 			}
 		}
@@ -450,7 +450,7 @@ int main(int argc, char* argv[])
 				{
 					ragnarok1(hp, HT1, HT1numOfEntries);
 					ragnarok2(HT2, HT2numOfEntries);
-					printf("Structures emptied. Ready for reuse\n");
+					printf("Memory cleaned\n");
 				}
 				else if(strcmp(split, PRINT) == 0)
 				{
@@ -469,7 +469,7 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			printf("Input file does not exist.\n");
+			printf("Input file does not exist\n");
 			//return -1;
 		}		
 	}
@@ -536,7 +536,7 @@ int main(int argc, char* argv[])
 				bucketSize = atoi(argv[i+1]);
 			else
 			{
-				printf("Wrong flag was given.\n");
+				printf("Wrong flag was given\n");
 				return -1;
 			}
 		}
@@ -880,7 +880,7 @@ int main(int argc, char* argv[])
 		{
 			ragnarok1(hp, HT1, HT1numOfEntries);
 			ragnarok2(HT2, HT2numOfEntries);
-			printf("Structures emptied. Ready for reuse\n");
+			printf("Memory cleaned\n");
 		}
 		else if(strcmp(split, PRINT) == 0)
 		{
