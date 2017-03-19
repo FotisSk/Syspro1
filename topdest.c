@@ -19,6 +19,7 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 	codeNode *currentListNode, *previousListNode, *listNode, *maxListNode;
 	topdestList *headNode;
 
+	printf("[ topdest %s ]\n", caller);
 	headNode = malloc(sizeof(topdestList));
 	headNode -> numOfNodes = 0;
 	headNode -> head = NULL;
@@ -52,7 +53,7 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 	}
 	if(currentBucketNode1 -> b1[i].numOfNodes2 == 0)
 	{
-		printf("No calls found (caller %s)\n", caller);
+		printf("No calls found\n");
 		return;
 	}
 
@@ -94,21 +95,10 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 		}
 		currentBucketNode2 = currentBucketNode2 -> next;		
 	}
-	//ektiposi olis tis listas (gia mena)
-	/*
-	currentListNode = headNode -> head;
-	printf("####### %s #######\n", caller);
-	for(k=0; k<headNode -> numOfNodes; k++)
-	{
-		printf("{ Code: %s | Times Called: %d}\n", currentListNode -> code, currentListNode -> timesCalled);
-		currentListNode = currentListNode -> next;
-	}
-	printf("##############################\n\n");
-	*/
+
 	maxListNode = NULL;
 	maxCalls = 0;
 	currentListNode = headNode -> head;
-	//printf("*** TOPDEST %s ***\n", caller);
 	for(k=0; k<headNode -> numOfNodes; k++)
 	{
 		if(currentListNode -> timesCalled > maxCalls)
@@ -128,8 +118,7 @@ void topDestCaller(hashTable1 *HT1, int HT1numOfEntries, char *caller)
 
 		currentListNode = currentListNode -> next;
 	}
-	printf("**************************\n");
-
+	printf("\n");
 	//apodesmeusi listas
 	numOfListNodes = headNode -> numOfNodes;
 	currentListNode = headNode -> head;

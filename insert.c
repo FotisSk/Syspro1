@@ -120,7 +120,6 @@ int insertCaller(heap *hp, hashTable1 *HT1, int HT1numOfEntries, int bucket1_max
 		head1 = HT1[key].head1;
 		currentBucketNode1 = head1;
 		flag1 = 0;
-		//nextAvailablePos1 = head1 -> nextAvailablePos;
 		for(i=0; i<numOfNodes1; i++)	//anazitisi an iparxei idi to origNum.
 		{
 			for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
@@ -378,6 +377,7 @@ int insertNode(heap *hp, bucketNode1_caller *bucketNode1_child, int pos_child, h
 	hnode -> bucketPos = pos_child;
 	hnode -> leftChild = NULL;
 	hnode -> rightChild = NULL;
+	hnode -> inTopKList = 0;
 
 	bucketNode1_child -> b1[pos_child].heapPtr = hnode;
 
@@ -429,51 +429,6 @@ int insertNode(heap *hp, bucketNode1_caller *bucketNode1_child, int pos_child, h
 	return 1;
 }
 
-	/*
-	else	//an to heap einai adeio
-	{
-		hnode = malloc(sizeof(heapNode));
-		hnode -> nodeNum = 1;	//allios, hp -> numOfNodes + 1;
-
-		hnode -> subscriber = malloc((strlen(origNum)+1) * sizeof(char));
-		strcpy(hnode -> subscriber, origNum);
-
-		if(fault_condition >= 200 && fault_condition < 300)
-		{
-			currentChargeListNode = chargeListHead;
-			while(currentChargeListNode)
-			{
-				if(currentChargeListNode -> c.type == type && currentChargeListNode -> c.tarrif == tarrif)
-				{
-					if(type == 0 && tarrif == 0)
-					{
-						hnode -> amount = currentChargeListNode -> c.cost;
-						break;
-					}
-					else
-					{
-						hnode -> amount = (currentChargeListNode -> c.cost) * (double)duration;
-						break;
-					}
-				}
-				
-				currentChargeListNode = currentChargeListNode -> next;
-			}
-		}
-		else
-			hnode -> amount = 0;
-
-		hnode -> father = NULL;
-		hnode -> leftChild = NULL;
-		hnode -> rightChild = NULL;
-
-		hp -> numOfNodes++;
-		hp -> head = hnode;
-
-		bucketNode1_child -> b1[pos_child].heapPtr = hnode;
-
-	}
-	*/
 
 int updateNode(heap *hp, bucketNode1_caller *currentBucketNode1, int pos_child, int duration, int type, int tarrif, int fault_condition, chargeListNode *chargeListHead)
 {
@@ -563,51 +518,6 @@ int heapify(heap *hp, heapNode *childPtr)//, bucketNode1_caller *bucketNode1_chi
 	}
 	return 1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*********************************************************************************************************************/

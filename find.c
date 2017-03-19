@@ -29,9 +29,8 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 			{
 				if(currentBucketNode1 -> b1[i].numOfNodes2 == 0)
 				{
-					//printf("> Scenario %d\n", scenario);
-					printf("No CDRs found  (%s)\n", origNum);
-					//printf("|--------------------------------------------------------------------------------------------------------|\n");
+					printf("[ find %s ... ]\n", origNum);
+					printf("No CDRs found\n\n");
 					return -1;
 				}
 				flag1 = 1;
@@ -48,8 +47,7 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 				switch(scenario)
 				{
 					case 0:
-						//printf("> Scenario 0\n");
-						//printf("> Every call from '%s'\n", origNum);
+						printf("[ find %s ]\n", origNum);
 						while(currentBucketNode2)	//psakse oli ti lista mexri to telos
 						{
 							for(j=0; j<currentBucketNode2 -> nextAvailablePos; j++)
@@ -64,13 +62,11 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 							
 						}
 						if(callsFound == 0)
-							printf("No CDRs found  (%s)\n", origNum);
-						//printf("> Total of %d calls found.\n", callsFound);
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found\n");
+
 						break;
 
 					case 1:
-						//printf("> Scenario 1\n");
 						ts1 = timeToIntegers(time1);
 						ts2 = timeToIntegers(time2);
 
@@ -78,13 +74,13 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 						{
 							fromTime = ts2.totalMinutes;
 							toTime = ts1.totalMinutes;
-							//printf("> Every call from '%s' between %dH:%dM and %dH:%dM\n", origNum, ts2.hours, ts2.minutes, ts1.hours, ts1.minutes);
+							printf("[ find %s %dH:%dM - %dH:%dM ]\n", origNum, ts2.hours, ts2.minutes, ts1.hours, ts1.minutes);
 						}
 						else if(ts1.totalMinutes <= ts2.totalMinutes)
 						{
 							fromTime = ts1.totalMinutes;
 							toTime = ts2.totalMinutes;
-							//printf("> Every call from '%s' between %dH:%dM and %dH:%dM\n", origNum, ts1.hours, ts1.minutes, ts2.hours, ts2.minutes);
+							printf("[ find %s %dH:%dM - %dH:%dM ]\n", origNum, ts1.hours, ts1.minutes, ts2.hours, ts2.minutes);
 						}
 						while(currentBucketNode2)
 						{
@@ -102,16 +98,14 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 							currentBucketNode2 = currentBucketNode2 -> next;
 						}
 						if(callsFound == 0)
-							printf("No CDRs found  (%s)\n", origNum);
-						//printf("> Total of %d calls found.\n", callsFound);
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found\n");
+		
 						break;
 
 					case 2:
-						//printf("> Scenario 2\n");
 						ds1 = dateToIntegers(date1);
 						ds2 = dateToIntegers(date2);
-						//printf("> Every call from '%s' between %d/%d/%d and %d/%d/%d\n", origNum, ds1.day, ds1.month, ds1.year, ds2.day, ds2.month, ds2.year);
+						printf("[ find %s  %d/%d/%d - %d/%d/%d ]\n", origNum, ds1.day, ds1.month, ds1.year, ds2.day, ds2.month, ds2.year);
 
 						if(ds1.year > ds2.year)
 							return -1;
@@ -160,19 +154,17 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 							currentBucketNode2 = currentBucketNode2 -> next;
 						}
 						if(callsFound == 0)
-							printf("No CDRs found  (%s)\n", origNum);
-						//printf("> Total of %d calls found.\n", callsFound);
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found\n");
+						
 						break;
 
 					case 3:
-						//printf("> Scenario 3\n");
 						ds1 = dateToIntegers(date1);
 						ds2 = dateToIntegers(date2);
 						ts1 = timeToIntegers(time1);
 						ts2 = timeToIntegers(time2);
 
-						//printf("> Every call from '%s' between %dH:%dM %d/%d/%d and %dH:%dM %d/%d/%d\n", origNum, ts1.hours, ts1.minutes, ds1.day, ds1.month, ds1.year, ts2.hours, ts2.minutes, ds2.day, ds2.month, ds2.year);
+						printf("[ find %s %dH:%dM %d/%d/%d - %dH:%dM %d/%d/%d ]\n", origNum, ts1.hours, ts1.minutes, ds1.day, ds1.month, ds1.year, ts2.hours, ts2.minutes, ds2.day, ds2.month, ds2.year);
 
 						if(ds1.year > ds2.year)
 							return -1;
@@ -232,9 +224,8 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 							currentBucketNode2 = currentBucketNode2 -> next;
 						}
 						if(callsFound == 0)
-							printf("No CDRs found  (%s)\n", origNum);
-						//printf("> Total of %d calls found.\n", callsFound);
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found\n");
+		
 						break;
 				}
 
@@ -246,10 +237,9 @@ int findCaller(hashTable1 *HT1, int HT1numOfEntries, int scenario, char *origNum
 	}
 	if(flag1 == 0)
 	{
-		printf("No CDRs found  (%s)\n", origNum);
-		//printf("> Scenario %d\n", scenario);
-		//printf("Caller '%s' not found.\n", origNum);
-		//printf("|--------------------------------------------------------------------------------------------------------|\n");
+		printf("[ find %s ... ]\n", origNum);
+		printf("No CDRs found\n\n");
 		return -1;
 	}
+	printf("\n");
 }

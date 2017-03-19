@@ -10,12 +10,12 @@
 #include "topdest.h"
 #include "bye.h"
 #include "print.h"
-
-
+#include "top.h"
 
 int main(int argc, char* argv[])
 {
 	int i, j, k, HT1numOfEntries, HT2numOfEntries, bucketSize, readFromFile, fileInput, duration, type, tarrif, fault_condition, len, bucket1_maxEntries, bucket2_maxEntries, insertFlag, scenario, line;
+	double percentage;
 	char fileName[SIZE], billingFileName[SIZE], billingFileLine[SIZE],fileLine[SIZE], userLine[SIZE], ht1[] = "hashtable1", ht2[] = "hashtable2";
 	char *o = "-o", *h1 = "-h1", *h2 = "-h2", *s = "-s", *b = "-b", *split, *cdr_uniq_id, *origNum, *destNum, *date, *time, *time1, *time2, *date1, *date2, *caller, *caller1, *caller2;
 	hashTable1 *HT1;
@@ -114,8 +114,6 @@ int main(int argc, char* argv[])
 			while(fgets(fileLine, SIZE, op) != NULL)
 			{
 				split = strtok(fileLine, " ;\r\n");
-				//printf("%s\n", fileLine);
-				//printf("%s\n", split);
 
 				if(strcmp(split, INSERT) == 0)
 				{
@@ -160,7 +158,7 @@ int main(int argc, char* argv[])
 					{
 						bucket1_maxEntries = bucketSize / sizeof(bucket1_caller);
 						bucket2_maxEntries = bucketSize / sizeof(bucket2_caller);
-						printf("MAX ENTRIES: b1=%d, b2=%d\n", bucket1_maxEntries, bucket2_maxEntries);
+						printf("Max entries per bucket: b1=%d, b2=%d\n\n", bucket1_maxEntries, bucket2_maxEntries);
 					}
 					//klisi insert sinartisis
 					insertCaller(hp, HT1, HT1numOfEntries, bucket1_maxEntries, bucket2_maxEntries, cdr_uniq_id, origNum, destNum, date, time, duration, type, tarrif, fault_condition, headNodeCharge);
@@ -258,8 +256,7 @@ int main(int argc, char* argv[])
 								
 								if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
 								{
-									printf("No CDRs found (date1 > date2)\n");
-									//printf("|--------------------------------------------------------------------------------------------------------|\n");
+									printf("No CDRs found (date1 > date2)\n\n");
 								}
 								free(origNum);
 								origNum = NULL;
@@ -287,8 +284,7 @@ int main(int argc, char* argv[])
 							
 							if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
 							{
-								printf("No CDRs found (date1 > date2)\n");
-								//printf("|--------------------------------------------------------------------------------------------------------|\n");
+								printf("No CDRs found (date1 > date2)\n\n");
 							}
 							free(origNum);
 							origNum = NULL;
@@ -365,8 +361,7 @@ int main(int argc, char* argv[])
 								scenario = 3;
 								if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
 								{
-									printf("No CDRs found (date1 > date2)\n");
-									//printf("|--------------------------------------------------------------------------------------------------------|\n");
+									printf("No CDRs found (date1 > date2)\n\n");
 								}
 								free(destNum);
 								destNum = NULL;
@@ -393,8 +388,7 @@ int main(int argc, char* argv[])
 							scenario = 2;
 							if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
 							{
-								printf("No CDRs found (date1 > date2)\n");
-								//printf("|--------------------------------------------------------------------------------------------------------|\n");
+								printf("No CDRs found (date1 > date2)\n\n");
 							}
 							free(destNum);
 							destNum = NULL;	
@@ -444,13 +438,16 @@ int main(int argc, char* argv[])
 				}
 				else if(strcmp(split, TOP) == 0)
 				{
-
+					split = strtok(NULL, " \r\n");
+					percentage = atof(split);
+					topKPercent(hp, percentage, HT1, HT1numOfEntries);
 				}
 				else if(strcmp(split, BYE) == 0)
 				{
+					printf("[ bye ]\n");
 					ragnarok1(hp, HT1, HT1numOfEntries);
 					ragnarok2(HT2, HT2numOfEntries);
-					printf("Memory cleaned\n");
+					printf("Memory cleaned\n\n");
 				}
 				else if(strcmp(split, PRINT) == 0)
 				{
@@ -470,7 +467,6 @@ int main(int argc, char* argv[])
 		else
 		{
 			printf("Input file does not exist\n");
-			//return -1;
 		}		
 	}
 
@@ -543,10 +539,17 @@ int main(int argc, char* argv[])
 	}
 	/******************************************************************************************/
 	/***************************************** USER ******************************************/
-	printf("You are in control now.\n");
-	//fflush(stdin);
+	printf("You are in control. Use CTRL-D if you want to exit the program.\n");
+	printf("> ");
 	while(fgets(userLine, SIZE, stdin) != NULL)
 	{
+		if(userLine[0] == '\n' || userLine[0] == '\t' || userLine[0] == ' ' || userLine[0] == '\v')
+		{
+			memset(userLine, 0, SIZE);
+			printf("> ");
+			continue;
+		}
+
 		split = strtok(userLine, " ;\r\n");
 
 		if(strcmp(split, INSERT) == 0)
@@ -623,7 +626,7 @@ int main(int argc, char* argv[])
 			strcpy(origNum, split);
 
 			delete(HT1, HT1numOfEntries, cdr_uniq_id, origNum);
-					//free gia na min exoume leaks
+			//free gia na min exoume leaks
 			free(origNum);
 			origNum = NULL;
 			free(cdr_uniq_id);
@@ -689,8 +692,7 @@ int main(int argc, char* argv[])
 								
 						if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
 						{
-							printf("No CDRs found (date1 > date2)\n");
-							//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found (date1 > date2)\n\n");
 						}
 						free(origNum);
 						origNum = NULL;
@@ -718,8 +720,7 @@ int main(int argc, char* argv[])
 							
 					if(findCaller(HT1, HT1numOfEntries, scenario, origNum, time1, date1, time2, date2) == -1)
 					{
-						printf("No CDRs found (date1 > date2)\n");
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
+						printf("No CDRs found (date1 > date2)\n\n");
 					}
 					free(origNum);
 					origNum = NULL;
@@ -795,8 +796,7 @@ int main(int argc, char* argv[])
 						scenario = 3;
 						if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
 						{
-							printf("No CDRs found (date1 > date2)\n");
-							//printf("|--------------------------------------------------------------------------------------------------------|\n");
+							printf("No CDRs found (date1 > date2)\n\n");
 						}	
 						free(destNum);
 						destNum = NULL;
@@ -824,7 +824,6 @@ int main(int argc, char* argv[])
 					if(lookupCallee(HT2, HT2numOfEntries, scenario, destNum, time1, date1, time2, date2) == -1)
 					{
 						printf("No CDRs found (date1 > date2)\n");
-						//printf("|--------------------------------------------------------------------------------------------------------|\n");
 					}
 					free(destNum);
 					destNum = NULL;	
@@ -874,13 +873,16 @@ int main(int argc, char* argv[])
 		}
 		else if(strcmp(split, TOP) == 0)
 		{
-
+			split = strtok(NULL, " \r\n");
+			percentage = atof(split);
+			topKPercent(hp, percentage, HT1, HT1numOfEntries);
 		}
 		else if(strcmp(split, BYE) == 0)
 		{
+			printf("[ bye ]\n");
 			ragnarok1(hp, HT1, HT1numOfEntries);
 			ragnarok2(HT2, HT2numOfEntries);
-			printf("Memory cleaned\n");
+			printf("Memory cleaned\n\n");
 		}
 		else if(strcmp(split, PRINT) == 0)
 		{
@@ -896,9 +898,10 @@ int main(int argc, char* argv[])
 			printf("Wrong command was given\n");
 
 		memset(userLine, 0, SIZE);
+		printf("> ");
 	}//end while	
 
-	printf("h1: %d, h2: %d, bucketSize: %d and filename: %s\n",HT1numOfEntries, HT2numOfEntries, bucketSize, fileName);
+	printf("Werhauz terminated\n");
 
 	fclose(billing);
 

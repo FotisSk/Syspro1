@@ -18,6 +18,7 @@ void printHT1(hashTable1 *HT1, int HT1numOfEntries)
 	bucketNode2_caller *currentBucketNode2;
 	bucket2_caller *b2;
 
+	printf("[ print hashtable1 ]\n");
 	printf("HASHTABLE_1\n");
 	for(i=0; i<HT1numOfEntries; i++)
 	{
@@ -57,6 +58,7 @@ void printHT2(hashTable2 *HT2, int HT2numOfEntries)
 	bucketNode2_callee *currentBucketNode2;
 	bucket2_callee *b2;
 
+	printf("[ print hashtable2 ]\n");
 	printf("HASHTABLE_2\n");
 	for(i=0; i<HT2numOfEntries; i++)
 	{

@@ -26,6 +26,7 @@ typedef struct heapNode
 	struct heapNode *father;
 	struct heapNode *leftChild;
 	struct heapNode *rightChild;
+	int inTopKList;
 }heapNode;
 
 typedef struct heap
@@ -34,6 +35,14 @@ typedef struct heap
 	heapNode *head;
 }heap;
 /*********************************************/
+
+typedef struct topK_listNode
+{
+	char *subscriber;
+	double amount;
+	heapNode *heapPtr;
+	struct topK_listNode *next;
+}topK_listNode;
 
 /******************* EXTRAS *******************/
 typedef struct charge

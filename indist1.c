@@ -24,7 +24,6 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 	{
 		if(strcmp(phoneNum, currentListNode -> phoneNum) == 0)
 		{
-			//printf("'%s' already in the list\n", phoneNum);
 			return -1;
 		}
 		else
@@ -61,7 +60,6 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 				if(strcmp(currentListNode -> phoneNum, currentBucketNode2_caller -> b2[k].destNum) == 0)
 				{
 					deny = 1;
-					//printf("Insert denied (1): '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
 					if(previousListNode)
 					{
 						previousListNode -> next = currentListNode -> next;
@@ -95,7 +93,6 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 					if(strcmp(currentListNode -> phoneNum, currentBucketNode2_callee -> b2[m].origNum) == 0)
 					{
 						deny = 1;
-						//printf("Insert denied (2): '%s' has contacted '%s'\n", phoneNum, currentListNode -> phoneNum);
 						if(previousListNode)
 						{
 							previousListNode -> next = currentListNode -> next;
@@ -132,7 +129,6 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 		//tote mono kanei eisagogi sti lista ton sindromiti.
 		if(headNode -> numOfNodes == 0)
 		{
-			//printf("Insert Accepted (1): '%s'\n", phoneNum);
 			headNode -> head = malloc(sizeof(subscriberNode));
 			headNode -> head -> phoneNum = malloc((strlen(phoneNum)+1) * sizeof(char));
 			strcpy(headNode -> head -> phoneNum, phoneNum);
@@ -141,7 +137,6 @@ int insertToIndistList(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, in
 		}
 		else
 		{
-			//printf("Insert Accepted (2): '%s'\n", phoneNum);
 			currentListNode -> next = malloc(sizeof(subscriberNode));
 			currentListNode -> next -> phoneNum = malloc((strlen(phoneNum)+1) * sizeof(char));
 			strcpy(currentListNode -> next -> phoneNum, phoneNum);
@@ -162,7 +157,7 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 	bucketNode1_callee *currentBucketNode1_callee;
 	bucketNode2_callee *currentBucketNode2_callee, *cbn2_callee;
 
-
+	printf("[ indist1 %s %s ]\n", caller1, caller2);
 	headNode = malloc(sizeof(indistList));
 
 	headNode -> caller1 = malloc((strlen(caller1)+1) * sizeof(char));
@@ -227,7 +222,6 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 							{
 								foundYou = 1;
 								currentBucketNode2_callee = currentBucketNode1_callee -> b1[m].extraCDR;
-								//cbn2_callee = currentBucketNode2_callee; //orisma gia ti sinartisi
 								while(currentBucketNode2_callee && subCount < 2)
 								{
 									for(n=0; n<currentBucketNode2_callee -> nextAvailablePos; n++)
@@ -276,16 +270,12 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 						}
 					}
 					else if(subCount == 2)
-					{
-						//printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
 						insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode, cbn2_caller);
-					}
+					
 				}
 				else if(subCount == 2)
-				{
-					//printf("Sub '%s' has  contacted both of sub1: '%s' and sub2: '%s'\n", phoneNum, caller1, caller2);
 					insertToIndistList(HT1, HT1numOfEntries, HT2, HT2numOfEntries, phoneNum, headNode, cbn2_caller);
-				}
+				
 
 				free(phoneNum);
 				phoneNum = NULL;
@@ -294,8 +284,6 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 		}
 	}//end for i
 	currentListNode = headNode -> head;
-
-	//printf("indist[%s, %s]\n", headNode -> caller1, headNode -> caller2 );
 
 	if(headNode -> numOfNodes == 0)
 		printf("No indist found\n");
@@ -306,9 +294,7 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 			printf("%s\n", currentListNode -> phoneNum);
 			currentListNode = currentListNode -> next;
 		}
-		//printf("\n");
-	}
-	printf("******************\n");	
+	}	
 	//apodesmeusi mnimis meta tin ektiposi
 	currentListNode = headNode -> head;
 	numOfNodes = headNode -> numOfNodes;
@@ -327,5 +313,6 @@ void indist(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *HT2, int HT2numOfE
 	headNode -> caller2 = NULL;
 	free(headNode);
 	headNode = NULL;
-
+	
+	printf("\n");
 }

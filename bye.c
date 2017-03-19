@@ -18,13 +18,11 @@ void ragnarok1(heap *hp, hashTable1 *HT1, int HT1numOfEntries)
 	
 	for(i=0; i<HT1numOfEntries; i++)
 	{
-		//previousBucketNode1 = NULL;
 		currentBucketNode1 = HT1[i].head1;
 		while(currentBucketNode1)
 		{
 			for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
 			{
-				//previousBucketNode2 = NULL;
 				currentBucketNode2 = currentBucketNode1 -> b1[j].extraCDR;
 
 				while(currentBucketNode2)
@@ -41,7 +39,6 @@ void ragnarok1(heap *hp, hashTable1 *HT1, int HT1numOfEntries)
 
 					currentBucketNode1 -> b1[j].extraCDR = currentBucketNode2 -> next;
 					free(currentBucketNode2);
-					//previousBucketNode2 = currentBucketNode2;
 					currentBucketNode2 = currentBucketNode1 -> b1[j].extraCDR;
 				}
 				free(currentBucketNode1 -> b1[j].origNum);
@@ -62,7 +59,6 @@ void ragnarok1(heap *hp, hashTable1 *HT1, int HT1numOfEntries)
 		HT1[i].numOfNodes1 = 0;
 	}
 	hp -> head = NULL;
-	//free(HT1);
 }
 
 void ragnarok2(hashTable2 *HT2, int HT2numOfEntries)
@@ -73,13 +69,11 @@ void ragnarok2(hashTable2 *HT2, int HT2numOfEntries)
 	
 	for(i=0; i<HT2numOfEntries; i++)
 	{
-		//previousBucketNode1 = NULL;
 		currentBucketNode1 = HT2[i].head2;
 		while(currentBucketNode1)
 		{
 			for(j=0; j<currentBucketNode1 -> nextAvailablePos; j++)
 			{
-				//previousBucketNode2 = NULL;
 				currentBucketNode2 = currentBucketNode1 -> b1[j].extraCDR;
 
 				while(currentBucketNode2)
@@ -96,7 +90,6 @@ void ragnarok2(hashTable2 *HT2, int HT2numOfEntries)
 
 					currentBucketNode1 -> b1[j].extraCDR = currentBucketNode2 -> next;
 					free(currentBucketNode2);
-					//previousBucketNode2 = currentBucketNode2;
 					currentBucketNode2 = currentBucketNode1 -> b1[j].extraCDR;
 				}
 				free(currentBucketNode1 -> b1[j].destNum);
@@ -111,5 +104,4 @@ void ragnarok2(hashTable2 *HT2, int HT2numOfEntries)
 		}
 		HT2[i].numOfNodes2 = 0;
 	}
-	//free(HT2);
 }

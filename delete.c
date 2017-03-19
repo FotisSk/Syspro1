@@ -11,6 +11,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 	bucketNode1_caller *head1, *currentBucketNode1;
 	bucketNode2_caller *currentBucketNode2, *previousBucketNode2;
 
+	printf("[ delete %s %s ]\n", origNum, cdr_uniq_id);
 	key = hashFunction(origNum, HT1numOfEntries);
 
 	numOfNodes1 = HT1[key].numOfNodes1;
@@ -28,7 +29,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 			{
 				if(currentBucketNode1 -> b1[j].numOfNodes2 == 0)
 				{
-					printf("DError (No calls found from caller '%s')\n", origNum);
+					printf("DError (No calls found from caller '%s')\n\n", origNum);
 					return -1;
 				}
 				flag1 = 1;
@@ -129,6 +130,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 
 									currentBucketNode1 -> b1[j].numOfNodes2--;
 								}
+								printf("\n");
 								return 1;
 							}
 						}
@@ -140,7 +142,7 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 				}
 				if(flag2 == 0)
 				{
-					printf("DError  (Caller '%s' has no call with cdr_uniq_id '%s')\n", origNum, cdr_uniq_id);
+					printf("DError  (Caller '%s' has no call with cdr_uniq_id '%s')\n\n", origNum, cdr_uniq_id);
 					return -1;
 				}
 			}
@@ -153,7 +155,8 @@ int delete(hashTable1 *HT1, int HT1numOfEntries, char *cdr_uniq_id, char *origNu
 	}
 	if(flag1 == 0)
 	{
-		printf("DError (Caller '%s' not found)\n", origNum);
+		printf("DError (Caller '%s' not found)\n\n", origNum);
 		return -1;
 	}
+	printf("\n");
 }
