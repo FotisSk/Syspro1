@@ -120,7 +120,7 @@ int insertToIndistListCaller(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *H
 				currentBucketNode2_callee = currentBucketNode2_callee -> next;
 			}	
 		}
-		if(i != numOfNodes -1 && deny == 0)
+		if(i != numOfNodes -1 && flag == 0)
 		{
 			previousListNode = currentListNode;
 			currentListNode = currentListNode -> next;
@@ -207,7 +207,7 @@ int insertToIndistListCallee(hashTable1 *HT1, int HT1numOfEntries, hashTable2 *H
 			}
 			currentBucketNode2_callee = currentBucketNode2_callee -> next;
 		}
-		if(i != numOfNodes -1 && deny == 0)
+		if(i != numOfNodes -1 && flag == 0)
 		{
 			previousListNode = currentListNode;
 			currentListNode = currentListNode -> next;
