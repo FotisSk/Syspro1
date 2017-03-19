@@ -113,6 +113,11 @@ int main(int argc, char* argv[])
 		{
 			while(fgets(fileLine, SIZE, op) != NULL)
 			{
+				if(fileLine[0] == '\n' || fileLine[0] == '\t' || fileLine[0] == ' ' || fileLine[0] == '\v')
+				{
+					memset(fileLine, 0, SIZE);
+					continue;
+				}
 				split = strtok(fileLine, " ;\r\n");
 
 				if(strcmp(split, INSERT) == 0)
